@@ -1,20 +1,16 @@
 
-
-
 #' Log likelihood of observed data
 #'
 #' The log likelihood for vectors giving the observed status
 #' for three periods
 #'
 #' @param st3_observed numeric vector: observed status in t3
-#' @param st2_observed numeric vector: observed status in t3
-#' @param st1_observed numeric vector: observed status in t3
+#' @param st2_observed numeric vector: observed status in t2
+#' @param st1_observed numeric vector: observed status in t1
 #' @param par_vec parameter vector
 #'
-#' @return
+#' @return numeric
 #' @export
-#'
-#' @example
 get_ar1_sym_full_likelihood <- function(
     st3_observed,
     st2_observed,
@@ -61,10 +57,8 @@ get_ar1_sym_full_likelihood <- function(
 #'
 #' @inheritParams get_ar1_sym_transition_probability
 #'
-#' @return
+#' @return numeric
 #' @export
-#'
-#' @examples
 get_ar1_sym_individual_likelihood <- function(
     st3_observed,
     st2_observed,
@@ -138,7 +132,7 @@ get_ar1_sym_individual_likelihood <- function(
 #' @param st3 numeric: 0 or 1 - observed status in period t2
 #' @inheritParams get_ar1_sym_joint_probability
 #'
-#' @return
+#' @return numeric
 #' @keywords internal
 get_ar1_sym_transition_probability <- function(
     st3_observed,

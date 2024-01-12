@@ -36,6 +36,9 @@ unconditional distribution in t1, where P(st1_true = 1) = mu}
 
 \item{st3}{numeric: 0 or 1 - observed status in period t2}
 }
+\value{
+numeric
+}
 \description{
 Observed ransition probability, which is conditional
 distribution of observed period 3 (t3) status given

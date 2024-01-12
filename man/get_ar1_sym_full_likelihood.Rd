@@ -9,11 +9,14 @@ get_ar1_sym_full_likelihood(st3_observed, st2_observed, st1_observed, par_vec)
 \arguments{
 \item{st3_observed}{numeric vector: observed status in t3}
 
-\item{st2_observed}{numeric vector: observed status in t3}
+\item{st2_observed}{numeric vector: observed status in t2}
 
-\item{st1_observed}{numeric vector: observed status in t3}
+\item{st1_observed}{numeric vector: observed status in t1}
 
 \item{par_vec}{parameter vector}
+}
+\value{
+numeric
 }
 \description{
 The log likelihood for vectors giving the observed status

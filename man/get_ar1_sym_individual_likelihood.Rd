@@ -32,6 +32,9 @@ transformation}
 \item{mu}{numeric: parameter of true process. Specifies
 unconditional distribution in t1, where P(st1_true = 1) = mu}
 }
+\value{
+numeric
+}
 \description{
 Likelihood of observed statuses in t1, t2, t3 for an
 individual.

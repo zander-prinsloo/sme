@@ -3,3 +3,4 @@
 export(estimate_ar1_sym)
 export(get_ar1_sym_full_likelihood)
 export(get_ar1_sym_individual_likelihood)
+export(get_ar1_tenure_joint_probability)

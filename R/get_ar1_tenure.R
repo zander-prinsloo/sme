@@ -1,6 +1,20 @@
+get_ar1_tenure_individual_likelihood <- function(
+    st1_observed, st2_observed, st3_observed,
+    g_1, g_2, g_3,
+    h_1, h_2, h_3,
+    err,
+    mu,
+    theta_1,
+    theta_2,
+    sigma,
+    lambda_h,
+    lambda_g
+){
 
 
 
+
+}
 
 
 
@@ -35,7 +49,7 @@
 #' @export
 get_ar1_tenure_joint_probability <- function(
     st1_observed, st2_observed, st3_observed,
-    st1_true, s_star_2, s_star_3,
+    st1_true, st2_true, st3_true,
     g_1, g_2, g_3,
     h_1, h_2, h_3,
     err,
@@ -70,13 +84,13 @@ get_ar1_tenure_joint_probability <- function(
 
   #_____________________________________________________________________________
   # Misclassify Q2--------------------------------------------------------------
-  p_misclass_2 <- p_err^(st2_observed * s_star_2 + (1 - st2_observed) * (1 - s_star_2)) * # no error
-    (1 - p_err)^((1 - st2_observed) * s_star_2 + st2_observed * (1 - s_star_2))           # error
+  p_misclass_2 <- p_err^(st2_observed * st2_true + (1 - st2_observed) * (1 - st2_true)) * # no error
+    (1 - p_err)^((1 - st2_observed) * st2_true + st2_observed * (1 - st2_true))           # error
 
   #_____________________________________________________________________________
   # Misclassify Q3--------------------------------------------------------------
-  p_misclass_3 <- p_err^(st3_observed * s_star_3 + (1 - st3_observed) * (1 - s_star_3)) * # no error
-    (1 - p_err)^((1 - st3_observed) * s_star_3 + st3_observed * (1 - s_star_3))           # error
+  p_misclass_3 <- p_err^(st3_observed * st3_true + (1 - st3_observed) * (1 - st3_true)) * # no error
+    (1 - p_err)^((1 - st3_observed) * st3_true + st3_observed * (1 - st3_true))           # error
 
   #_____________________________________________________________________________
   # S1* in Q1 ----------------------------------------------------------------
@@ -85,17 +99,17 @@ get_ar1_tenure_joint_probability <- function(
 
   #_____________________________________________________________________________
   # S2*|S1*---------------------------------------------------------------------
-  p_trans_q2 <- theta_1^(st1_true * s_star_2) *      # S*2 = 1 | S*1 = 1
-    (1 - theta_1)^(st1_true * (1 - s_star_2)) *      # S*2 = 0 | S*1 = 1
-    theta_2^((1 - st1_true) * s_star_2) *            # S*2 = 1 | S*1 = 0
-    (1 - theta_2)^((1 - st1_true) * (1 - s_star_2))  # S*2 = 0 | S*1 = 0
+  p_trans_q2 <- theta_1^(st1_true * st2_true) *      # S*2 = 1 | S*1 = 1
+    (1 - theta_1)^(st1_true * (1 - st2_true)) *      # S*2 = 0 | S*1 = 1
+    theta_2^((1 - st1_true) * st2_true) *            # S*2 = 1 | S*1 = 0
+    (1 - theta_2)^((1 - st1_true) * (1 - st2_true))  # S*2 = 0 | S*1 = 0
 
   #_____________________________________________________________________________
   # S3*|S2*---------------------------------------------------------------------
-  p_trans_q3 <- theta_1^(s_star_2 * s_star_3) *      # S*3 = 1 | S*2 = 1
-    (1 - theta_1)^(s_star_2 * (1 - s_star_3)) *      # S*3 = 0 | S*2 = 1
-    theta_2^((1 - s_star_2) * s_star_3) *            # S*3 = 1 | S*2 = 0
-    (1 - theta_2)^((1 - s_star_2) * (1 - s_star_3))  # S*3 = 0 | S*2 = 0
+  p_trans_q3 <- theta_1^(st2_true * st3_true) *      # S*3 = 1 | S*2 = 1
+    (1 - theta_1)^(st2_true * (1 - st3_true)) *      # S*3 = 0 | S*2 = 1
+    theta_2^((1 - st2_true) * st3_true) *            # S*3 = 1 | S*2 = 0
+    (1 - theta_2)^((1 - st2_true) * (1 - st3_true))  # S*3 = 0 | S*2 = 0
 
   #_____________________________________________________________________________
   # tenure Q1-------------------------------------------------------------------
@@ -116,18 +130,18 @@ get_ar1_tenure_joint_probability <- function(
       x    = g_2 - g_1 - 0.25,
       mean = 0,
       sd   = sqrt(2 * sigma^2)
-    )^(st2_observed*st1_observed*st1_true*s_star_2) *         # S*2 = 1, S*1 = 1, S2 = 1, S1 = 1
+    )^(st2_observed*st1_observed*st1_true*st2_true) *         # S*2 = 1, S*1 = 1, S2 = 1, S1 = 1
     dnorm(
       x    = g_2 - 0.125,
       mean = 0,
       sd   = sigma
-    )^(st2_observed*s_star_2*(1 - st1_true)) *       # S*2 = 1, S*1 = 0, S2 = 1, S1 = 0/1
+    )^(st2_observed*st2_true*(1 - st1_true)) *       # S*2 = 1, S*1 = 0, S2 = 1, S1 = 0/1
     ex_gaussian_density(
       g_2,
       sigma,
       lambda_g
-    )^st2_observed*((1 - s_star_2) +                 # S*2 = 0, S2 = 1
-               s_star_2*(1 - st1_observed)*st1_true) # S*2 = 1, S*1 = 1, S2 = 1, S1 = 0
+    )^st2_observed*((1 - st2_true) +                 # S*2 = 0, S2 = 1
+               st2_true*(1 - st1_observed)*st1_true) # S*2 = 1, S*1 = 1, S2 = 1, S1 = 0
 
   #_____________________________________________________________________________
   # unemployment duration Q2----------------------------------------------------
@@ -136,18 +150,18 @@ get_ar1_tenure_joint_probability <- function(
       x    = h_2 - h_1 - 0.25,
       mean = 0,
       sd   = sqrt(2 * sigma^2)
-    )^((1 - st2_observed)*(1 - st1_observed)*(1 - st1_true)*(1 - s_star_2)) * # S*2=0, S*1=0, S2=0, S1=0
+    )^((1 - st2_observed)*(1 - st1_observed)*(1 - st1_true)*(1 - st2_true)) * # S*2=0, S*1=0, S2=0, S1=0
     dnorm(
       x    = h_2 - 0.125,
       mean = 0,
       sd   = sigma
-    )^((1 - st2_observed) * (1 - s_star_2) * st1_true) *            #
+    )^((1 - st2_observed) * (1 - st2_true) * st1_true) *            #
     ex_gaussian_density(
       h_2,
       sigma,
       lambda_h
-    )^((1 - st2_observed)*(s_star_2 +
-                    (1 - s_star_2)*st1_observed*(1 - st1_true)))
+    )^((1 - st2_observed)*(st2_true +
+                    (1 - st2_true)*st1_observed*(1 - st1_true)))
 
   #_____________________________________________________________________________
   # tenure Q3-------------------------------------------------------------------
@@ -156,22 +170,22 @@ get_ar1_tenure_joint_probability <- function(
       x    = g_3 - g_1 - 0.5,
       mean = 0,
       sd   = sqrt(2*sigma^2)
-    )^(st3_observed*st2_observed*st1_observed*s_star_3*(1 - s_star_2)*st1_true) *
+    )^(st3_observed*st2_observed*st1_observed*st3_true*(1 - st2_true)*st1_true) *
     dnorm(
       x    = g_3 - g_2 - 0.25,
       mean = 0,
       sd   = sqrt(2 * sigma^2)
-    )^(st3_observed*st2_observed*s_star_2*s_star_3) *
+    )^(st3_observed*st2_observed*st2_true*st3_true) *
     dnorm(
       x    = g_3 - 0.125,
       mean = 0,
       sd   = sigma
-    )^(st3_observed*s_star_3*(1 - s_star_2)) *
+    )^(st3_observed*st3_true*(1 - st2_true)) *
     ex_gaussian_density(
       g_3,
       sigma,
       lambda_g
-    )^st3_observed*((1 - s_star_3) + s_star_3*(1 - st2_observed)*s_star_2*((1 - st1_observed) + (1 - st1_true)))
+    )^st3_observed*((1 - st3_true) + st3_true*(1 - st2_observed)*st2_true*((1 - st1_observed) + (1 - st1_true)))
 
   #_____________________________________________________________________________
   # unemployment duration Q3----------------------------------------------------
@@ -180,23 +194,23 @@ get_ar1_tenure_joint_probability <- function(
       x    = h_3 - h_1 - 0.5,
       mean = 0,
       sd   = sqrt(2 * sigma^2)
-    )^((1 - st3_observed) * (1 - st2_observed) * (1 - st1_observed) * (1 - s_star_3) * s_star_2 * (1 - st1_true)) *
+    )^((1 - st3_observed) * (1 - st2_observed) * (1 - st1_observed) * (1 - st3_true) * st2_true * (1 - st1_true)) *
     dnorm(
       x    = h_3 - h_2 - 0.25,
       mean = 0,
       sd   = sqrt(2 * sigma^2)
-    )^((1 - st3_observed) * (1 - st2_observed) * (1 - s_star_2) * (1 - s_star_3)) *
+    )^((1 - st3_observed) * (1 - st2_observed) * (1 - st2_true) * (1 - st3_true)) *
     dnorm(
       x    = h_3 - 0.125,
       mean = 0,
       sd   = sigma
-    )^((1 - st3_observed) * (1 - s_star_3) * s_star_2) *
+    )^((1 - st3_observed) * (1 - st3_true) * st2_true) *
     ex_gaussian_density(
       h_3,
       sigma,
       lambda_h
-    )^((1 - st3_observed) * (s_star_3 +
-                      (1 - s_star_3) * st2_observed * (1 - s_star_2) * (st1_observed + st1_true)))
+    )^((1 - st3_observed) * (st3_true +
+                      (1 - st3_true) * st2_observed * (1 - st2_true) * (st1_observed + st1_true)))
 
 
   #_____________________________________________________________________________
@@ -222,31 +236,31 @@ get_ar1_tenure_joint_probability <- function(
   # # Compute the probability
   # probability <- err^(st1_observed * st1_true + (1 - st1_observed) * (1 - st1_true)) *
   #   (1 - err)^((1 - st1_observed) * st1_true + st1_observed * (1 - st1_true)) *
-  #   err^(st2_observed * s_star_2 + (1 - st2_observed) * (1 - s_star_2)) *
-  #   (1 - err)^((1 - st2_observed) * s_star_2 + st2_observed * (1 - s_star_2)) *
-  #   err^(st3_observed * s_star_3 + (1 - st3_observed) * (1 - s_star_3)) *
-  #   (1 - err)^((1 - st3_observed) * s_star_3 + st3_observed * (1 - s_star_3)) *
+  #   err^(st2_observed * st2_true + (1 - st2_observed) * (1 - st2_true)) *
+  #   (1 - err)^((1 - st2_observed) * st2_true + st2_observed * (1 - st2_true)) *
+  #   err^(st3_observed * st3_true + (1 - st3_observed) * (1 - st3_true)) *
+  #   (1 - err)^((1 - st3_observed) * st3_true + st3_observed * (1 - st3_true)) *
   #   mu^st1_true * (1 - mu)^(1 - st1_true) *
-  #   theta_1^(st1_true * s_star_2) * (1 - theta_1)^(st1_true * (1 - s_star_2)) *
-  #   theta_2^((1 - st1_true) * s_star_2) * (1 - theta_2)^((1 - st1_true) * (1 - s_star_2)) *
-  #   theta_1^(s_star_2 * s_star_3) * (1 - theta_1)^(s_star_2 * (1 - s_star_3)) *
-  #   theta_2^((1 - s_star_2) * s_star_3) * (1 - theta_2)^((1 - s_star_2) * (1 - s_star_3)) *
+  #   theta_1^(st1_true * st2_true) * (1 - theta_1)^(st1_true * (1 - st2_true)) *
+  #   theta_2^((1 - st1_true) * st2_true) * (1 - theta_2)^((1 - st1_true) * (1 - st2_true)) *
+  #   theta_1^(st2_true * st3_true) * (1 - theta_1)^(st2_true * (1 - st3_true)) *
+  #   theta_2^((1 - st2_true) * st3_true) * (1 - theta_2)^((1 - st2_true) * (1 - st3_true)) *
   #   ex_gaussian_density(g_1, sigma, lambda_g)^st1_observed *
   #   ex_gaussian_density(h_1, sigma, lambda_h)^(1 - st1_observed) *
-  #   dnorm(g_2 - g_1 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^(st2_observed * st1_observed * st1_true * s_star_2) *
-  #   dnorm(g_2 - 0.125, mean = 0, sd = sigma)^(st2_observed * s_star_2 * (1 - st1_true)) *
-  #   ex_gaussian_density(g_2, sigma, lambda_g)^st2_observed * ((1 - s_star_2) + s_star_2 * (1 - st1_observed) * st1_true) *
-  #   dnorm(h_2 - h_1 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st2_observed) * (1 - st1_observed) * (1 - st1_true) * (1 - s_star_2)) *
-  #   dnorm(h_2 - 0.125, mean = 0, sd = sigma)^((1 - st2_observed) * (1 - s_star_2) * st1_true) *
-  #   ex_gaussian_density(h_2, sigma, lambda_h)^((1 - st2_observed) * (s_star_2 + (1 - s_star_2) * st1_observed * (1 - st1_true))) *
-  #   dnorm(g_3 - g_1 - 0.5, mean = 0, sd = sqrt(2 * sigma^2))^(st3_observed * st2_observed * st1_observed * s_star_3 * (1 - s_star_2) * st1_true) *
-  #   dnorm(g_3 - g_2 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^(st3_observed * st2_observed * s_star_2 * s_star_3) *
-  #   dnorm(g_3 - 0.125, mean = 0, sd = sigma)^(st3_observed * s_star_3 * (1 - s_star_2)) *
-  #   ex_gaussian_density(g_3, sigma, lambda_g)^st3_observed * ((1 - s_star_3) + s_star_3 * (1 - st2_observed) * s_star_2 * ((1 - st1_observed) + (1 - st1_true))) *
-  #   dnorm(h_3 - h_1 - 0.5, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st3_observed) * (1 - st2_observed) * (1 - st1_observed) * (1 - s_star_3) * s_star_2 * (1 - st1_true)) *
-  #   dnorm(h_3 - h_2 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st3_observed) * (1 - st2_observed) * (1 - s_star_2) * (1 - s_star_3)) *
-  #   dnorm(h_3 - 0.125, mean = 0, sd = sigma)^((1 - st3_observed) * (1 - s_star_3) * s_star_2) *
-  #   ex_gaussian_density(h_3, sigma, lambda_h)^((1 - st3_observed) * (s_star_3 + (1 - s_star_3) * st2_observed * (1 - s_star_2) * (st1_observed + st1_true)))
+  #   dnorm(g_2 - g_1 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^(st2_observed * st1_observed * st1_true * st2_true) *
+  #   dnorm(g_2 - 0.125, mean = 0, sd = sigma)^(st2_observed * st2_true * (1 - st1_true)) *
+  #   ex_gaussian_density(g_2, sigma, lambda_g)^st2_observed * ((1 - st2_true) + st2_true * (1 - st1_observed) * st1_true) *
+  #   dnorm(h_2 - h_1 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st2_observed) * (1 - st1_observed) * (1 - st1_true) * (1 - st2_true)) *
+  #   dnorm(h_2 - 0.125, mean = 0, sd = sigma)^((1 - st2_observed) * (1 - st2_true) * st1_true) *
+  #   ex_gaussian_density(h_2, sigma, lambda_h)^((1 - st2_observed) * (st2_true + (1 - st2_true) * st1_observed * (1 - st1_true))) *
+  #   dnorm(g_3 - g_1 - 0.5, mean = 0, sd = sqrt(2 * sigma^2))^(st3_observed * st2_observed * st1_observed * st3_true * (1 - st2_true) * st1_true) *
+  #   dnorm(g_3 - g_2 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^(st3_observed * st2_observed * st2_true * st3_true) *
+  #   dnorm(g_3 - 0.125, mean = 0, sd = sigma)^(st3_observed * st3_true * (1 - st2_true)) *
+  #   ex_gaussian_density(g_3, sigma, lambda_g)^st3_observed * ((1 - st3_true) + st3_true * (1 - st2_observed) * st2_true * ((1 - st1_observed) + (1 - st1_true))) *
+  #   dnorm(h_3 - h_1 - 0.5, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st3_observed) * (1 - st2_observed) * (1 - st1_observed) * (1 - st3_true) * st2_true * (1 - st1_true)) *
+  #   dnorm(h_3 - h_2 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st3_observed) * (1 - st2_observed) * (1 - st2_true) * (1 - st3_true)) *
+  #   dnorm(h_3 - 0.125, mean = 0, sd = sigma)^((1 - st3_observed) * (1 - st3_true) * st2_true) *
+  #   ex_gaussian_density(h_3, sigma, lambda_h)^((1 - st3_observed) * (st3_true + (1 - st3_true) * st2_observed * (1 - st2_true) * (st1_observed + st1_true)))
   #
   # Return the computed probability
   #return(probability)

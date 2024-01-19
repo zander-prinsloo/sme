@@ -9,8 +9,8 @@ get_ar1_tenure_joint_probability(
   st2_observed,
   st3_observed,
   st1_true,
-  s_star_2,
-  s_star_3,
+  st2_true,
+  st3_true,
   g_1,
   g_2,
   g_3,
@@ -32,6 +32,8 @@ get_ar1_tenure_joint_probability(
 \item{st2_observed}{numeric: 0 or 1 - observed status in period t2}
 
 \item{st1_true}{numeric: 0 or 1 - true status in period t1}
+
+\item{st2_true}{numeric: 0 or 1 - true status in period t2}
 
 \item{g_1}{numeric: observed tenure t1}
 

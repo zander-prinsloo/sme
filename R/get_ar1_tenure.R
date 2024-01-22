@@ -11,8 +11,62 @@ get_ar1_tenure_individual_likelihood <- function(
     lambda_g
 ){
 
+  #_____________________________________________________________________________
+  # Arguments-------------------------------------------------------------------
+  if (lambda_h < 0) {
+    cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
+  }
+  if (lambda_g < 0) {
+    cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
+  }
+  if (sigma < 0) {
+    cli::cli_abort("Gaussian parameter `sigma` must be non-negative")
+  }
 
+  #_____________________________________________________________________________
+  # Vectorize-------------------------------------------------------------------
+  get_ar1_sym_joint_probability_v <- Vectorize(
+    FUN = get_ar1_sym_joint_probability,
+    vectorize.args = c("st1_observed", "st2_observed", "st3_observed",
+      "st1_true", "st2_true", "st3_true",
+      "g_1", "g_2", "g_3",
+      "h_1", "h_2", "h_3",
+      "err",
+      "mu",
+      "theta_1",
+      "theta_2",
+      "sigma",
+      "lambda_h",
+      "lambda_g")
+  )
 
+  #_____________________________________________________________________________
+  # Computations----------------------------------------------------------------
+  lik <- get_ar1_sym_joint_probability_v(
+    st1_observed = st1_observed,
+    st2_observed = st2_observed,
+    st3_observed = st3_observed,
+    st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
+    st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
+    st3_true     = c(0, 1, 0, 1, 0, 1, 0, 1),
+    g_1          = g_1,
+    g_2          = g_2,
+    g_3          = g_3,
+    h_1          = h_1,
+    h_2          = h_2,
+    h_3          = h_3,
+    err          = err,
+    mu           = mu,
+    theta_1      = theta_1,
+    theta_2      = theta_2,
+    sigma        = sigma,
+    lambda_h     = lambda_h,
+    lambda_g     = lambda_g
+  )
+
+  #_____________________________________________________________________________
+  # Return----------------------------------------------------------------------
+  lik
 
 }
 

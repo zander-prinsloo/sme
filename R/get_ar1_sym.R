@@ -1,4 +1,3 @@
-
 #' Log likelihood of observed data
 #'
 #' The log likelihood for vectors giving the observed status
@@ -22,22 +21,44 @@ get_ar1_sym_full_likelihood <- function(
 
 
     # Specify Parameters
-    theta_01 <- par_vec[1]
-    theta_02 <- par_vec[2]
+    theta_1  <- par_vec[1]
+    theta_2  <- par_vec[2]
     err      <- par_vec[3]
     mu       <- par_vec[4]
 
-    log_lik <- get_ar1_sym_individual_likelihood(
+    ind_lik_vec <- Vectorize(
+      FUN            = get_ar1_sym_individual_likelihood,
+      vectorize.args = c(
+        "st3_observed",
+        "st2_observed",
+        "st1_observed"
+      ),
+      SIMPLIFY = TRUE
+    )
+
+    log_lik <- ind_lik_vec(
       st3_observed = st3_observed,
       st2_observed = st2_observed,
       st1_observed = st1_observed,
-      theta_01     = theta_01,
-      theta_02     = theta_02,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
       err          = err,
       mu           = mu
-    ) |>
-      log() |>
-      sum()
+    ) #|>
+      # log() |>
+      # sum()
+
+    # log_lik <- get_ar1_sym_individual_likelihood(
+    #   st3_observed = st3_observed,
+    #   st2_observed = st2_observed,
+    #   st1_observed = st1_observed,
+    #   theta_1     = theta_1,
+    #   theta_2     = theta_2,
+    #   err          = err,
+    #   mu           = mu
+    # ) |>
+    #   log() |>
+    #   sum()
 
     # Return
     return(log_lik)
@@ -63,8 +84,8 @@ get_ar1_sym_individual_likelihood <- function(
     st3_observed,
     st2_observed,
     st1_observed,
-    theta_01,
-    theta_02,
+    theta_1,
+    theta_2,
     err,
     mu
   ){
@@ -73,15 +94,15 @@ get_ar1_sym_individual_likelihood <- function(
 
 
 
-
+  n <- length(st3_observed)
   #_____________________________________________________________________________
   # Transition prob ------------------------------------------------------------
   ind_lik_a <- get_ar1_sym_transition_probability(
     st3_observed = st3_observed,
     st2_observed = st2_observed,
     st1_observed = st1_observed,
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    theta_1     = theta_1,
+    theta_2     = theta_2,
     err          = err,
     mu           = mu
   )
@@ -90,24 +111,25 @@ get_ar1_sym_individual_likelihood <- function(
   # Joint prob -----------------------------------------------------------------
   ind_lik_b <- get_ar1_sym_joint_probability(
     st2_observed = st2_observed,
-    st2_true     = c(
-      rep(1, n),
-      rep(0, n),
-      rep(1, n),
-      rep(0, n)
-    ),
+    st2_true     = c(1, 0, 1, 0),
+    #   rep(1, n),
+    #   rep(0, n),
+    #   rep(1, n),
+    #   rep(0, n)
+    # ),
     st1_observed = st1_observed,
-    st1_true     = c(
-      rep(1, n),
-      rep(1, n),
-      rep(0, n),
-      rep(0, n)
-    ),
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    st1_true     = c(1, 1, 0, 0),
+    #   rep(1, n),
+    #   rep(1, n),
+    #   rep(0, n),
+    #   rep(0, n)
+    # ),
+    theta_1     = theta_1,
+    theta_2     = theta_2,
     err          = err,
     mu           = mu
-  ) |>
+  )
+  ind_lik_b <- ind_lik_b |>
     sum()
 
   # Final Product
@@ -125,11 +147,11 @@ get_ar1_sym_individual_likelihood <- function(
 
 
 
-#' Observed ransition probability, which is conditional
+#' Observed transition probability, which is conditional
 #' distribution of observed period 3 (t3) status given
 #' observed statuses in t2 and t1 - P(st3 | st2, st1)
 #'
-#' @param st3 numeric: 0 or 1 - observed status in period t2
+#' @param st3_observed numeric: 0 or 1 - observed status in period t2
 #' @inheritParams get_ar1_sym_joint_probability
 #'
 #' @return numeric
@@ -138,8 +160,8 @@ get_ar1_sym_transition_probability <- function(
     st3_observed,
     st2_observed,
     st1_observed,
-    theta_01,
-    theta_02,
+    theta_1,
+    theta_2,
     err,
     mu
 ){
@@ -153,20 +175,20 @@ get_ar1_sym_transition_probability <- function(
   #_____________________________________________________________________________
   # Constant -------------------------------------------------------------------
   constant_1 <- (2*pnorm(err) - 1)*(
-    pnorm(theta_02) + (
-      pnorm(theta_01) -
-        pnorm(theta_02)
-    )*pnorm(theta_02)
+    pnorm(theta_2) + (
+      pnorm(theta_1) -
+        pnorm(theta_2)
+    )*pnorm(theta_2)
   )
 
   constant_2 <- 1 - pnorm(err)
 
   constant_3 <- -(1 - pnorm(err))*(
-    pnorm(theta_01) -
-      pnorm(theta_02)
+    pnorm(theta_1) -
+      pnorm(theta_2)
   )*(
-    pnorm(theta_01) -
-      pnorm(theta_02)
+    pnorm(theta_1) -
+      pnorm(theta_2)
   )
 
   constant <- constant_1 + constant_2 + constant_3
@@ -174,13 +196,13 @@ get_ar1_sym_transition_probability <- function(
   #_____________________________________________________________________________
   # Term 1 -----------------------------------------------------------------
   coef_1 <- (
-    pnorm(theta_01) -
-      pnorm(theta_02)
+    pnorm(theta_1) -
+      pnorm(theta_2)
   )*(
-    pnorm(theta_01) -
-      pnorm(theta_02)
+    pnorm(theta_1) -
+      pnorm(theta_2)
   )
-  term_1 <- coef_1*st1
+  term_1 <- coef_1*st1_observed
 
   #_____________________________________________________________________________
   # Term 2 -----------------------------------------------------------------
@@ -189,17 +211,17 @@ get_ar1_sym_transition_probability <- function(
   #_____________________________________________________________________________
   # Term 3 - expectation epsilon t1 --------------------------------------------
   coef_3 <- (
-    pnorm(theta_01) -
-      pnorm(theta_02)
+    pnorm(theta_1) -
+      pnorm(theta_2)
   )*(
-    pnorm(theta_01) -
-      pnorm(theta_02)
+    pnorm(theta_1) -
+      pnorm(theta_2)
   )
   term_3 <- -coef_3*get_ar1_sym_expected_value_epsilon_t1(
     st2_observed = st2_observed,
     st1_observed = st1_observed,
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    theta_1     = theta_1,
+    theta_2     = theta_2,
     err          = err,
     mu           = mu
   )
@@ -211,15 +233,15 @@ get_ar1_sym_transition_probability <- function(
   #_____________________________________________________________________________
   # Term 5 ---------------------------------------------------------------------
   coef_5 <- (
-    pnorm(theta_01) -
-      pnorm(theta_02)
+    pnorm(theta_1) -
+      pnorm(theta_2)
   )
   coef_5 <- coef_5*(2*pnorm(err) - 1)
   term_5 <- coef_5*get_ar1_sym_expected_value_e_t2(
     st2_observed = st2_observed,
     st1_observed = st1_observed,
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    theta_1     = theta_1,
+    theta_2     = theta_2,
     err          = err,
     mu           = mu
   )
@@ -229,7 +251,7 @@ get_ar1_sym_transition_probability <- function(
 
   # Transition in and out of employment
   output <- ifelse(
-    st3 == 1,
+    st3_observed == 1,
     prob_1,
     1 - prob_1
   )
@@ -258,32 +280,32 @@ get_ar1_sym_transition_probability <- function(
 get_ar1_sym_expected_value_epsilon_t1 <- function(
     st2_observed,
     st1_observed,
-    theta_01,
-    theta_02,
+    theta_1,
+    theta_2,
     err,
     mu
 ){
   #_____________________________________________________________________________
   # Arg Checks -----------------------------------------------------------------
 
-  n <- length(st2)
+  n <- length(st2_observed)
   # First component - first two terms
-  a <- st1 - (1 - pnorm(err))
+  a <- st1_observed - (1 - pnorm(err))
 
   # Final Term - numerator
   b_numer <- get_ar1_sym_joint_probability(
     st2_observed = st2_observed,
-    st2_true     = c(
-      rep(1, n),
-      rep(0, n)
-    ),
+    st2_true     = c(1, 0),
+    #   rep(1, n),
+    #   rep(0, n)
+    # ),
     st1_observed = st1_observed,
-    st1_true     = c(
-      rep(1, n),
-      rep(1, n)
-    ),
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    st1_true     = c(1, 1),
+    #   rep(1, n),
+    #   rep(1, n)
+    # ),
+    theta_1     = theta_1,
+    theta_2     = theta_2,
     err          = err,
     mu           = mu
   ) |>
@@ -293,21 +315,21 @@ get_ar1_sym_expected_value_epsilon_t1 <- function(
   # Final Term - denominator
   b_denom <- get_ar1_sym_joint_probability(
     st2_observed = st2_observed,
-    st2_true     = c(
-      rep(1, n),
-      rep(0, n),
-      rep(1, n),
-      rep(0, n)
-    ),
+    st2_true     = c(1, 0, 1, 0),
+    #   rep(1, n),
+    #   rep(0, n),
+    #   rep(1, n),
+    #   rep(0, n)
+    # ),
     st1_observed = st1_observed,
-    st1_true     = c(
-      rep(1, n),
-      rep(1, n),
-      rep(0, n),
-      rep(0, n)
-    ),
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    st1_true     = c(1, 1, 0, 0),
+    #   rep(1, n),
+    #   rep(1, n),
+    #   rep(0, n),
+    #   rep(0, n)
+    # ),
+    theta_1     = theta_1,
+    theta_2     = theta_2,
     err          = err,
     mu           = mu
   ) |>
@@ -341,54 +363,72 @@ get_ar1_sym_expected_value_epsilon_t1 <- function(
 get_ar1_sym_expected_value_e_t2 <- function(
   st2_observed,
   st1_observed,
-  theta_01,
-  theta_02,
+  theta_1,
+  theta_2,
   err,
   mu
 ){
   #_____________________________________________________________________________
   # Arg Checks -----------------------------------------------------------------
 
-  n <- length(st2)
+  n <- length(st2_observed)
   #_____________________________________________________________________________
   # Joint Prob st1 & st2 -------------------------------------------------------
-  joint_prob <- get_ar1_sym_joint_probability(
+
+  joint_prob <-
+  get_ar1_sym_joint_probability(
     st2_observed = st2_observed,
-    st2_true     = c(
-      rep(0, n),
-      rep(0, n),
-      rep(1, n),
-      rep(1, n)
-    ),
+    st2_true     = c(1, 0, 1, 0),
     st1_observed = st1_observed,
-    st1_true     = c(
-      rep(0, n),
-      rep(1, n),
-      rep(0, n),
-      rep(1, n)
-    ),
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    st1_true     = c(1, 1, 0, 0),
+    theta_1      = theta_1,
+    theta_2      = theta_2,
     err          = err,
     mu           = mu
   ) |>
     sum()
 
+
+
+
+  #
+  # joint_prob <- get_ar1_sym_joint_probability(
+  #   st2_observed = st2_observed,
+  #   st2_true     = c(
+  #     rep(0, n),
+  #     rep(0, n),
+  #     rep(1, n),
+  #     rep(1, n)
+  #   ),
+  #   st1_observed = st1_observed,
+  #   st1_true     = c(
+  #     rep(0, n),
+  #     rep(1, n),
+  #     rep(0, n),
+  #     rep(1, n)
+  #   ),
+  #   theta_1     = theta_1,
+  #   theta_2     = theta_2,
+  #   err         = err,
+  #   mu          = mu
+  # ) |>
+  #   sum()
+
   #_____________________________________________________________________________
   # Calculations ---------------------------------------------------------------
   term_1a <- get_ar1_sym_joint_probability(
     st2_observed = st2_observed,
-    st2_true     = c(
-      rep(1, n),
-      rep(1, n)
-    ),
+    st2_true     = c(1, 1),
+    #   rep(1, n),
+    #   rep(1, n)
+    # ),
     st1_observed = st1_observed,
-    st1_true     = c(
-      rep(1, n),
-      rep(0, n)
-    ),
-    theta_01     = theta_01,
-    theta_02     = theta_02,
+    st1_true     = c(1, 0),
+    #   rep(1, n),
+    #   rep(0, n)
+    # ),
+    theta_1     = theta_1,
+    theta_2     = theta_2,
     err          = err,
     mu           = mu
   ) |>
@@ -396,26 +436,26 @@ get_ar1_sym_expected_value_e_t2 <- function(
   term_1 <- term_1a/joint_prob
 
   # Term 2
-  term_2 <- -pnorm(theta_02)
+  term_2 <- -pnorm(theta_2)
 
   # Term 3
-  term_3 <- -(pnorm(theta_01) - pnorm(theta_02))
+  term_3 <- -(pnorm(theta_1) - pnorm(theta_2))
   term_3 <- term_3*(
     get_ar1_sym_joint_probability(
       st2_observed = st2_observed,
-      st2_true     = c(
-        rep(1, n),
-        rep(0, n)
-      ),
+      st2_true     = c(1, 0),
+      #   rep(1, n),
+      #   rep(0, n)
+      # ),
       st1_observed = st1_observed,
-      st1_true     = c(
-        rep(1, n),
-        rep(1, n)
-      ),
-      theta_01     = theta_01,
-      theta_02     = theta_02,
-      err          = err,
-      mu           = mu
+      st1_true     = c(1, 1),
+      #   rep(1, n),
+      #   rep(1, n)
+      # ),
+      theta_1     = theta_1,
+      theta_2     = theta_2,
+      err         = err,
+      mu          = mu
     ) |>
       sum()
   )
@@ -442,9 +482,9 @@ get_ar1_sym_expected_value_e_t2 <- function(
 #' @param st2_true numeric: 0 or 1 - true status in period t2
 #' @param st1_observed numeric: 0 or 1 - observed status in period t1
 #' @param st1_true numeric: 0 or 1 - true status in period t1
-#' @param theta_01 numeric: parameter of true transition process specifying
+#' @param theta_1 numeric: parameter of true transition process specifying
 #' the probability (after applying probit) exiting status 1
-#' @param theta_02 numeric: parameter of true transition process specifying
+#' @param theta_2 numeric: parameter of true transition process specifying
 #' the probability (after applying probit) of entering status 1
 #' @param err numeric: parameter of noise process. The probability of
 #' misclassification is equal to 1-Phi(err), where Phi() is the probit
@@ -459,8 +499,8 @@ get_ar1_sym_joint_probability <- function(
     st2_true,
     st1_observed,
     st1_true,
-    theta_01,
-    theta_02,
+    theta_1,
+    theta_2,
     err,
     mu
 ){
@@ -483,17 +523,17 @@ get_ar1_sym_joint_probability <- function(
   #_____________________________________________________________________________
   # True Transition Prob Q1->Q2 ------------------------------------------------
   b_1 <- st2_true*(
-    pnorm(theta_02) +
+    pnorm(theta_2) +
       (
-        pnorm(theta_01) -
-          pnorm(theta_02)
+        pnorm(theta_1) -
+          pnorm(theta_2)
       )*st1_true
   )
   b_2 <- (1 - st2_true)*(
-    1 - pnorm(theta_02) -
+    1 - pnorm(theta_2) -
       (
-        pnorm(theta_01) -
-          pnorm(theta_02)
+        pnorm(theta_1) -
+          pnorm(theta_2)
       )*st1_true
   )
   b <- b_1 + b_2

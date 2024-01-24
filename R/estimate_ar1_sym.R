@@ -30,7 +30,7 @@ estimate_ar1_sym <- function(
   #_____________________________________________________________________________
   # Arg Checks -----------------------------------------------------------------
   if (is.null(weights)) {
-    weights <- rep(1, length(weights))
+    weights <- rep(1, length(st1_observed))
   }
   if (is.null(init_params)) {
     init_params <- c(
@@ -39,13 +39,47 @@ estimate_ar1_sym <- function(
       "err"      = 1.96,
       "mu"       = 0.5
     )
-  } else if (!names(init_params) %chin% c("theta_01", "theta_02", "err", "mu")) {
+  } else if (all(!names(init_params) %chin% c("theta_01", "theta_02", "err", "mu"))) {
     names(init_params) <- c("theta_01", "theta_02", "err", "mu")
+  }
+  #_____________________________________________________________________________
+  # Obj Function----------------------------------------------------------------
+  fn_ll <- function(par_vec){
+
+    # Specify Parameters
+    theta_01 <- par_vec[1]
+    theta_02 <- par_vec[2]
+    err      <- par_vec[3]
+    mu       <- par_vec[4]
+
+    log_lik <- get_ar1_sym_full_likelihood(
+      st3_observed = st3_observed,
+      st2_observed = st2_observed,
+      st1_observed = st1_observed,
+      par_vec      = c(
+        theta_01,
+        theta_02,
+        err,
+        mu
+      )
+      # theta_01     = theta_01,
+      # theta_02     = theta_02,
+      # err          = err,
+      # mu           = mu
+    ) |>
+      log()
+
+    log_lik <- (log_lik*weights) |>
+      sum()
+
+    # Return
+    return(log_lik)
+
   }
 
   #_____________________________________________________________________________
   # Global Estimation ----------------------------------------------------------
-  if (istRUE(global_est)) {
+  if (isTRUE(global_est)) {
 
     if (is.null(global_specification)) {
 
@@ -110,33 +144,7 @@ estimate_ar1_sym <- function(
       )
     )
 
-    # Define Objective Function ----
 
-    fn_ll <- function(par_vec){
-
-      # Specify Parameters
-      theta_01 <- par_vec[1]
-      theta_02 <- par_vec[2]
-      pi       <- par_vec[3]
-      mu       <- par_vec[4]
-
-      log_lik <- get_ar1_sym_individual_likelihood(
-        st3_observed = st3_observed,
-        st2_observed = st2_observed,
-        st1_observed = st1_observed,
-        theta_01     = theta_01,
-        theta_01     = theta_02,
-        err          = err,
-        mu           = mu
-      ) %>% log()
-
-      log_lik <- (log_lik*weights) |>
-        sum()
-
-      # Return
-      return(log_lik)
-
-    }
 
     obj_func <- smoof::makeSingleObjectiveFunction(
       fn       = fn_ll,
@@ -152,15 +160,15 @@ estimate_ar1_sym <- function(
     )
     )
     control_object <- mlrMBO::makeMBOControl() |>
-      mlrMBO::setMBOControlTermination(., iters = 50) |>
-      mlrMBO::setMBOControlInfill(., crit = mlrMBO::makeMBOInfillCritEI())
+      mlrMBO::setMBOControlTermination(iters = 50) |>
+      mlrMBO::setMBOControlInfill(crit = mlrMBO::makeMBOInfillCritEI())
 
     # Define initial search ----
     set.seed(1234)
     df_initial_search <- generateDesign(
-      n = 100,
+      n       = 100,
       par.set = par_space,
-      fun = lhs::randomLHS
+      fun     = lhs::randomLHS
     )
 
     df_initial_search <- df_initial_search |>

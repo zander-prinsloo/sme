@@ -301,6 +301,9 @@ estimate_ar1_tenure <- function(
         ineqB = c(0, 0, 0, 0)
       )
     )
+    if (verbose) {
+      print(sme_estimation |> summary())
+    }
   }
   if (maxLik::returnCode(sme_estimation) == 1) {
     if (verbose) {
@@ -322,6 +325,9 @@ estimate_ar1_tenure <- function(
         ineqB = c(0, 0, 0, 0)
       )
     )
+    if (verbose) {
+      print(sme_estimation |> summary())
+    }
   }
   if (maxLik::returnCode(sme_estimation) == 1) {
     if (verbose) {
@@ -353,7 +359,9 @@ estimate_ar1_tenure <- function(
         )
       }
     }
-
+    if (verbose) {
+      print(sme_estimation |> summary())
+    }
   }
 
   #_____________________________________________________________________________

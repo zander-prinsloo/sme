@@ -64,7 +64,22 @@ get_ar1_tenure_full_likelihood <- function(
   #_____________________________________________________________________________
   # Computations ---------------------------------------------------------------
 
-  lik <- get_ar1_tenure_individual_likelihood(
+  ind_lik_vec <- Vectorize(
+    FUN = get_ar1_tenure_individual_likelihood,
+    vectorize.args = c(
+      "st1_observed",
+      "st2_observed",
+      "st3_observed",
+      "g_1",
+      "g_2",
+      "g_3",
+      "h_1",
+      "h_2",
+      "h_3"
+    ),
+    SIMPLIFY = TRUE
+  )
+  lik <- ind_lik_vec(
     st1_observed   = st1_observed,
     st2_observed   = st2_observed,
     st3_observed   = st3_observed,
@@ -84,9 +99,29 @@ get_ar1_tenure_full_likelihood <- function(
     by_true_status = FALSE
   )
 
-  log_lik <- lik |>
-    log() |>
-    fsum()
+  # lik <- get_ar1_tenure_individual_likelihood(
+  #   st1_observed   = st1_observed,
+  #   st2_observed   = st2_observed,
+  #   st3_observed   = st3_observed,
+  #   g_1            = g_1,
+  #   g_2            = g_2,
+  #   g_3            = g_3,
+  #   h_1            = h_1,
+  #   h_2            = h_2,
+  #   h_3            = h_3,
+  #   err            = err,
+  #   mu             = mu,
+  #   theta_1        = theta_1,
+  #   theta_2        = theta_2,
+  #   sigma          = sigma,
+  #   lambda_h       = lambda_h,
+  #   lambda_g       = lambda_g,
+  #   by_true_status = FALSE
+  # )
+
+  # log_lik <- lik |>
+  #   log() |>
+  #   fsum()
 
   #_____________________________________________________________________________
   # Return --------------------------------------------------------------------
@@ -170,73 +205,98 @@ get_ar1_tenure_individual_likelihood <- function(
     )
   }
 
-  #_____________________________________________________________________________
-  # Non-vec---------------------------------------------------------------------
-  nonvec_func <- function(
-    st1_observed,
-    st2_observed,
-    st3_observed,
-    g_1,
-    g_2,
-    g_3,
-    h_1,
-    h_2,
-    h_3,
-    theta_1,
-    theta_2,
-    sigma,
-    lambda_h,
-    lambda_g,
-    err,
-    mu
-  ){
-    p <- get_ar1_tenure_joint_probability(
-              st1_observed = st1_observed,
-              st2_observed = st2_observed,
-              st3_observed = st3_observed,
-              st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
-              st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
-              st3_true     = c(1, 0, 1, 0, 1, 0, 1, 0),
-              g_1          = g_1,
-              g_2          = g_2,
-              g_3          = g_3,
-              h_1          = h_1,
-              h_2          = h_2,
-              h_3          = h_3,
-              err          = err,
-              mu           = mu,
-              theta_1      = theta_1,
-              theta_2      = theta_2,
-              sigma        = sigma,
-              lambda_h     = lambda_h,
-              lambda_g     = lambda_g
-    )
-
-    p
-  }
-  #_____________________________________________________________________________
-  # Vectorize-------------------------------------------------------------------
-  vec_func <- Vectorize(
-    FUN            = nonvec_func,
-    vectorize.args = c(
-      "st1_observed",
-      "st2_observed",
-      "st3_observed",
-      "g_1",
-      "g_2",
-      "g_3",
-      "h_1",
-      "h_2",
-      "h_3",
-      "theta_1",
-      "theta_2",
-      "sigma",
-      "lambda_h",
-      "lambda_g",
-      "err",
-      "mu"
-    )
+  lik <- get_ar1_tenure_joint_probability(
+    st1_observed = st1_observed,
+    st2_observed = st2_observed,
+    st3_observed = st3_observed,
+    st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
+    st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
+    st3_true     = c(0, 1, 0, 1, 0, 1, 0, 1),
+    g_1          = g_1,
+    g_2          = g_2,
+    g_3          = g_3,
+    h_1          = h_1,
+    h_2          = h_2,
+    h_3          = h_3,
+    err          = err,
+    mu           = mu,
+    theta_1      = theta_1,
+    theta_2      = theta_2,
+    sigma        = sigma,
+    lambda_h     = lambda_h,
+    lambda_g     = lambda_g
   )
+
+
+
+#
+#   #_____________________________________________________________________________
+#   # Non-vec---------------------------------------------------------------------
+#   nonvec_func <- function(
+#     st1_observed,
+#     st2_observed,
+#     st3_observed,
+#     g_1,
+#     g_2,
+#     g_3,
+#     h_1,
+#     h_2,
+#     h_3,
+#     theta_1,
+#     theta_2,
+#     sigma,
+#     lambda_h,
+#     lambda_g,
+#     err,
+#     mu
+#   ){
+#     p <- get_ar1_tenure_joint_probability(
+#               st1_observed = st1_observed,
+#               st2_observed = st2_observed,
+#               st3_observed = st3_observed,
+#               st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
+#               st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
+#               st3_true     = c(1, 0, 1, 0, 1, 0, 1, 0),
+#               g_1          = g_1,
+#               g_2          = g_2,
+#               g_3          = g_3,
+#               h_1          = h_1,
+#               h_2          = h_2,
+#               h_3          = h_3,
+#               err          = err,
+#               mu           = mu,
+#               theta_1      = theta_1,
+#               theta_2      = theta_2,
+#               sigma        = sigma,
+#               lambda_h     = lambda_h,
+#               lambda_g     = lambda_g
+#     )
+#
+#     p
+#   }
+#   #_____________________________________________________________________________
+#   # Vectorize-------------------------------------------------------------------
+#   vec_func <- Vectorize(
+#     FUN            = nonvec_func,
+#     vectorize.args = c(
+#       "st1_observed",
+#       "st2_observed",
+#       "st3_observed",
+#       "g_1",
+#       "g_2",
+#       "g_3",
+#       "h_1",
+#       "h_2",
+#       "h_3",
+#       "theta_1",
+#       "theta_2",
+#       "sigma",
+#       "lambda_h",
+#       "lambda_g",
+#       "err",
+#       "mu"
+#     )
+#   )
 
   #_____________________________________________________________________________
   # Computations----------------------------------------------------------------
@@ -262,24 +322,24 @@ get_ar1_tenure_individual_likelihood <- function(
   #   lambda_g     = lambda_g
   # )
 
-  lik <- vec_func(
-      st1_observed = st1_observed,
-      st2_observed = st2_observed,
-      st3_observed = st3_observed,
-      g_1          = g_1,
-      g_2          = g_2,
-      g_3          = g_3,
-      h_1          = h_1,
-      h_2          = h_2,
-      h_3          = h_3,
-      err          = err,
-      mu           = mu,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
-      sigma        = sigma,
-      lambda_h     = lambda_h,
-      lambda_g     = lambda_g
-  )
+  # lik <- vec_func(
+  #     st1_observed = st1_observed,
+  #     st2_observed = st2_observed,
+  #     st3_observed = st3_observed,
+  #     g_1          = g_1,
+  #     g_2          = g_2,
+  #     g_3          = g_3,
+  #     h_1          = h_1,
+  #     h_2          = h_2,
+  #     h_3          = h_3,
+  #     err          = err,
+  #     mu           = mu,
+  #     theta_1      = theta_1,
+  #     theta_2      = theta_2,
+  #     sigma        = sigma,
+  #     lambda_h     = lambda_h,
+  #     lambda_g     = lambda_g
+  # )
 
   if (!by_true_status) {
     lik <- fsum(lik)

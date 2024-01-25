@@ -101,7 +101,7 @@ get_ar1_tenure_full_likelihood <- function(
     lambda_h       = lambda_h,
     lambda_g       = lambda_g,
     by_true_status = FALSE,
-    skip_checks  = skip_checks
+    skip_checks    = skip_checks
   )
 
   # lik <- get_ar1_tenure_individual_likelihood(
@@ -359,6 +359,7 @@ get_ar1_tenure_individual_likelihood <- function(
 
   if (!by_true_status) {
     lik <- fsum(lik)
+    lik <- max(lik, 0.0000000001)
   }
 
   #_____________________________________________________________________________
@@ -530,7 +531,7 @@ get_ar1_tenure_joint_probability <- function(
       x      = h_2 - 0.125,
       mean   = 0,
       sd     = sigma
-    )^((1 - st2_observed) * (1 - st2_true) * st1_true) *            #
+    )^( (1 - st2_observed)*(1 - st2_true)*st1_true ) *            #
     ex_gaussian_density(
       x      = h_2,
       sigma  = sigma,
@@ -587,23 +588,23 @@ get_ar1_tenure_joint_probability <- function(
     )^((1 - st3_observed)*(st3_true +
                       (1 - st3_true)*st2_observed*(1 - st2_true)*st1_observed*(1 - st1_true)))
 
-
-  # return(
-  #   list(
-  #     p_misclass_1,
-  #       p_misclass_2,
-  #       p_misclass_3,
-  #       p_employed_q1,
-  #       p_trans_q2,
-  #       p_trans_q3,
-  #       p_tenure_q1,
-  #       p_unempl_dur_q1,
-  #       p_tenure_q2,
-  #       p_unempl_dur_q2,
-  #       p_tenure_q3,
-  #       p_unempl_dur_q3
-  #   )
-  # )
+#
+#   return(
+#     list(
+#       p_misclass_1,
+#         p_misclass_2,
+#         p_misclass_3,
+#         p_employed_q1,
+#         p_trans_q2,
+#         p_trans_q3,
+#         p_tenure_q1,
+#         p_unempl_dur_q1,
+#         p_tenure_q2,
+#         p_unempl_dur_q2, #
+#         p_tenure_q3,
+#         p_unempl_dur_q3  #
+#     )
+#   )
   #_____________________________________________________________________________
   # Likelihood------------------------------------------------------------------
   lik <- p_misclass_1 *

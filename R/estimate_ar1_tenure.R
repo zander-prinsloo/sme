@@ -3,6 +3,8 @@
 #'
 #' @inheritParams estimate_ar1_sym
 #' @inheritParams get_ar1_tenure_full_likelihood
+#' @param globa_n number of samples design - global estimation.
+#' See `mlrMBO:::generateDesign`
 #'
 #' @return list
 #' @export
@@ -21,7 +23,8 @@ estimate_ar1_tenure <- function(
     init_params          = NULL,
     global_est           = FALSE,
     global_specification = NULL,
-    verbose              = FALSE
+    verbose              = FALSE,
+    global_n             = 100
 ){
 
   #_____________________________________________________________________________
@@ -50,32 +53,32 @@ estimate_ar1_tenure <- function(
     sigma    <- par_vec[3]
     lambda_g <- par_vec[4]
     lambda_h <- par_vec[5]
-    pi       <- par_vec[3]
+    err      <- par_vec[3]
     mu       <- par_vec[4]
 
-    log_lik <- get_ar1_sym_individual_likelihood(
+    log_lik <- get_ar1_tenure_full_likelihood(
       st1_observed   = st1_observed,
       st2_observed   = st2_observed,
       st3_observed   = st3_observed,
-      g_1            = g_1,
-      g_2            = g_2,
-      g_3            = g_3,
-      h_1            = h_1,
-      h_2            = h_2,
-      h_3            = h_3,
-      err            = err,
-      mu             = mu,
-      theta_1        = theta_1,
-      theta_2        = theta_2,
-      sigma          = sigma,
-      lambda_h       = lambda_h,
-      lambda_g       = lambda_g,
-      by_true_status = FALSE
+      g_1            = gt1,
+      g_2            = gt2,
+      g_3            = gt3,
+      h_1            = ht1,
+      h_2            = ht2,
+      h_3            = ht3,
+      par_vec        = par_vec
+      # err            = err,
+      # mu             = mu,
+      # theta_1        = theta_1,
+      # theta_2        = theta_2,
+      # sigma          = sigma,
+      # lambda_h       = lambda_h,
+      # lambda_g       = lambda_g
     ) |>
       log()
 
     log_lik <- (log_lik*weights) |>
-      sum()
+      fsum()
 
     # Return
     return(log_lik)
@@ -196,22 +199,40 @@ estimate_ar1_tenure <- function(
       )
     )
     control_object <- mlrMBO::makeMBOControl() |>
-      mlrMBO::setMBOControlTermination(.,
+      mlrMBO::setMBOControlTermination(
                                        iters = 50) |>
-      mlrMBO::setMBOControlInfill(.,
+      mlrMBO::setMBOControlInfill(
                                   crit = mlrMBO::makeMBOInfillCritEI())
 
     # Define initial search ----
     set.seed(1234)
     df_initial_search <- generateDesign(
-      n       = 500,
+      n       = global_n,
       par.set = par_space,
       fun     = lhs::randomLHS
     )
 
     df_initial_search <- df_initial_search |>
       rbind(
-        init_params
+        init_params,
+        c(
+          "theta_1"   = 1.6,
+          "theta_2"   = -1.6,
+          "sigma"     = 0.15,
+          "lambda_g"  = 0.3,
+          "lambda_h"  = 0.3,
+          "err"       = 1.6,
+          "mu"        = 0.1
+        ),
+        c(
+          "theta_1"   = 1.7,
+          "theta_2"   = -1.7,
+          "sigma"     = 0.05,
+          "lambda_g"  = 0.4,
+          "lambda_h"  = 0.4,
+          "err"       = 1.5,
+          "mu"        = -0.1
+        )
       )
     df_initial_search$y <- apply(
       df_initial_search,
@@ -242,7 +263,19 @@ estimate_ar1_tenure <- function(
   sme_estimation <- maxLik(
     fn_ll,
     start = init_params,
-    method = "NM"
+    method = "NM",
+    constraints = list(
+      ineqA = matrix(
+        c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
+          0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
+          0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
+          0, 0, 0, 0, 0, 1, 0), # Constraint for err
+        ncol = 7,
+        byrow = TRUE
+      ),
+      ineqB = c(0, 0, 0, 0)
+    )
+
   )
   if (verbose) {
     print(sme_estimation |> summary())
@@ -254,7 +287,18 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM"
+      method = "NM",
+      constraints = list(
+        ineqA = matrix(
+          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
+            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
+            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
+            0, 0, 0, 0, 0, 1, 0), # Constraint for err
+          ncol = 7,
+          byrow = TRUE
+        ),
+        ineqB = c(0, 0, 0, 0)
+      )
     )
   }
   if (maxLik::returnCode(sme_estimation) == 1) {
@@ -264,7 +308,18 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM"
+      method = "NM",
+      constraints = list(
+        ineqA = matrix(
+          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
+            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
+            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
+            0, 0, 0, 0, 0, 1, 0), # Constraint for err
+          ncol = 7,
+          byrow = TRUE
+        ),
+        ineqB = c(0, 0, 0, 0)
+      )
     )
   }
   if (maxLik::returnCode(sme_estimation) == 1) {
@@ -274,7 +329,18 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM"
+      method = "NM",
+      constraints = list(
+        ineqA = matrix(
+          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
+            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
+            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
+            0, 0, 0, 0, 0, 1, 0), # Constraint for err
+          ncol = 7,
+          byrow = TRUE
+        ),
+        ineqB = c(0, 0, 0, 0)
+      )
     )
 
     if (verbose) {
@@ -335,7 +401,7 @@ estimate_ar1_tenure <- function(
   SME_Misclass <- car::deltaMethod(
     sme_estimation,
     vcov. = vcov(sme_estimation),
-    g = "1 - pnorm(pi)",
+    g = "1 - pnorm(err)",
     parameterNames = c("theta_1",
                        "theta_2",
                        "sigma",
@@ -399,7 +465,7 @@ estimate_ar1_tenure <- function(
     "estimated_model"    = sme_estimation,
     "mbo_model"          = global_model,
     "loglik"             = logLik(sme_estimation),
-    "model_summary"      = sme_estimation %>% summary(),
+    "model_summary"      = sme_estimation |> summary(),
     "poverty_entry_rate" = SME_JobEntry_rate,
     "poverty_exit_rate"  = SME_JobExit_rate,
     "poverty_rate"       = SME_Empl_rate,

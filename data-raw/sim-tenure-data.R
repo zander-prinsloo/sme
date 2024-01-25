@@ -4,8 +4,8 @@ sim_tenure_ar1 <- function(n        = 100000,
                            theta1   = 1.65,
                            theta2   = -1.65,
                            sigma    = 0.1, # 0.3-0.6
-                           lambda_g = 3,
-                           lambda_h = 3,
+                           lambda_g = 1/3,
+                           lambda_h = 1/3,
                            mu       = 0,
                            err      = 1.65,
                            seed     = 1234){
@@ -131,7 +131,13 @@ sim_tenure_ar1 <- function(n        = 100000,
       h3true = h3true,
       h1obs  = h1obs,
       h2obs  = h2obs,
-      h3obs  = h3obs
+      h3obs  = h3obs,
+      k1     = k1,
+      k2     = k2,
+      k3     = k3,
+      l1     = l1,
+      l2     = l2,
+      l3     = l3
     )
   df
 

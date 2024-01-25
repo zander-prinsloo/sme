@@ -70,7 +70,7 @@ estimate_ar1_sym <- function(
       log()
 
     log_lik <- (log_lik*weights) |>
-      sum()
+      fsum()
 
     # Return
     return(log_lik)

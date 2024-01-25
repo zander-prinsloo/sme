@@ -90,9 +90,9 @@ sim_tenure_ar1 <- function(n        = 100000,
   g1true[s1true == 0] <- 0
   g2true              <- s2true*(g1true + 0.25) + (1 - s2true)*0
   g3true              <- s3true*(g2true + 0.25) + (1 - s3true)*0
-  k1                  <- rexp(n = n, rate = lambda_g)
-  k2                  <- rexp(n = n, rate = lambda_g)
-  k3                  <- rexp(n = n, rate = lambda_g)
+  k1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_g)
+  k2                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_g)
+  k3                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_g)
   u_g1                <- rnorm(n = n, mean = 0, sd = sigma)
   u_g2                <- rnorm(n = n, mean = 0, sd = sigma)
   u_g3                <- rnorm(n = n, mean = 0, sd = sigma)
@@ -106,9 +106,9 @@ sim_tenure_ar1 <- function(n        = 100000,
   h1true[s1true == 1] <- 0
   h2true              <- (1 - s2true)*(h1true + 0.25) + s2true*0
   h3true              <- (1 - s3true)*(h2true + 0.25) + s3true*0
-  l1                  <- rexp(n = n, rate = lambda_h)
-  l2                  <- rexp(n = n, rate = lambda_h)
-  l3                  <- rexp(n = n, rate = lambda_h)
+  l1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_h)
+  l2                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_h)
+  l3                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_h)
   u_h1                <- rnorm(n = n, mean = 0, sd = sigma)
   u_h2                <- rnorm(n = n, mean = 0, sd = sigma)
   u_h3                <- rnorm(n = n, mean = 0, sd = sigma)

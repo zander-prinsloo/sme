@@ -48,13 +48,13 @@ estimate_ar1_tenure <- function(
   fn_ll <- function(par_vec){
 
     # Specify Parameters
-    theta_1  <- par_vec[1]
-    theta_2  <- par_vec[2]
-    sigma    <- par_vec[3]
-    lambda_g <- par_vec[4]
-    lambda_h <- par_vec[5]
-    err      <- par_vec[3]
-    mu       <- par_vec[4]
+    # theta_1  <- par_vec[1]
+    # theta_2  <- par_vec[2]
+    # sigma    <- par_vec[3]
+    # lambda_g <- par_vec[4]
+    # lambda_h <- par_vec[5]
+    # err      <- par_vec[3]
+    # mu       <- par_vec[4]
 
     log_lik <- get_ar1_tenure_full_likelihood(
       st1_observed   = st1_observed,
@@ -66,7 +66,8 @@ estimate_ar1_tenure <- function(
       h_1            = ht1,
       h_2            = ht2,
       h_3            = ht3,
-      par_vec        = par_vec
+      par_vec        = par_vec,
+      skip_checks    = TRUE
       # err            = err,
       # mu             = mu,
       # theta_1        = theta_1,
@@ -205,7 +206,7 @@ estimate_ar1_tenure <- function(
                                   crit = mlrMBO::makeMBOInfillCritEI())
 
     # Define initial search ----
-    set.seed(1234)
+    set.seed(123)
     df_initial_search <- generateDesign(
       n       = global_n,
       par.set = par_space,

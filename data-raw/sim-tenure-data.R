@@ -53,13 +53,13 @@ sim_tenure_ar1 <- function(n        = 100000,
   #___________________________________________
   err1 <- rbinom(n    = n,
                  size = 1,
-                 prob = 1 - pnorm(err))
+                 prob = pnorm(err))
   err2 <- rbinom(n    = n,
                  size = 1,
-                 prob = 1 - pnorm(err))
+                 prob = pnorm(err))
   err3 <- rbinom(n    = n,
                  size = 1,
-                 prob = 1 - pnorm(err))
+                 prob = pnorm(err))
 
   # data frame-----------
   #______________________

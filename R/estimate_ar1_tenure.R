@@ -48,13 +48,13 @@ estimate_ar1_tenure <- function(
   fn_ll <- function(par_vec){
 
     # Specify Parameters
-    # theta_1  <- par_vec[1]
-    # theta_2  <- par_vec[2]
-    # sigma    <- par_vec[3]
-    # lambda_g <- par_vec[4]
-    # lambda_h <- par_vec[5]
-    # err      <- par_vec[3]
-    # mu       <- par_vec[4]
+    theta_1  <- par_vec[1]
+    theta_2  <- par_vec[2]
+    sigma    <- par_vec[3]
+    lambda_g <- par_vec[4]
+    lambda_h <- par_vec[5]
+    err      <- par_vec[6]
+    mu       <- par_vec[7]
 
     log_lik <- get_ar1_tenure_full_likelihood(
       st1_observed   = st1_observed,
@@ -66,15 +66,14 @@ estimate_ar1_tenure <- function(
       h_1            = ht1,
       h_2            = ht2,
       h_3            = ht3,
-      par_vec        = par_vec,
+      theta_1        = theta_1,
+      theta_2        = theta_2,
+      sigma          = sigma,
+      lambda_g       = lambda_g,
+      lambda_h       = lambda_h,
+      err            = err,
+      mu             = mu,
       skip_checks    = TRUE
-      # err            = err,
-      # mu             = mu,
-      # theta_1        = theta_1,
-      # theta_2        = theta_2,
-      # sigma          = sigma,
-      # lambda_h       = lambda_h,
-      # lambda_g       = lambda_g
     ) |>
       log()
 

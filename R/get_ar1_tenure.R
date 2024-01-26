@@ -7,16 +7,22 @@
 #' @return numeric: log-likelihood
 #' @export
 get_ar1_tenure_full_likelihood <- function(
-    st3_observed,
-    st2_observed,
     st1_observed,
+    st2_observed,
+    st3_observed,
     g_1,
     g_2,
     g_3,
     h_1,
     h_2,
     h_3,
-    par_vec,
+    theta_1,
+    theta_2,
+    sigma,
+    lambda_g,
+    lambda_h,
+    err,
+    mu,
     skip_checks = FALSE
 ){
   #_____________________________________________________________________________
@@ -38,33 +44,33 @@ get_ar1_tenure_full_likelihood <- function(
       vectors for all three periods should all have the same length."
       )
     }
-    if (!all(names(par_vec) == c(
-      "theta_1",
-      "theta_2",
-      "sigma",
-      "lambda_g",
-      "lambda_h",
-      "err",
-      "mu"
-    ))) {
-      cli::cli_alert_info(
-        "The `par_vec` argument should be a named numeric atomic vector and in
-      the following order: theta_1, theta_2, sigma, lambda_g, lambda_h,
-      err, mu"
-      )
-    }
+    # if (!all(names(par_vec) == c(
+    #   "theta_1",
+    #   "theta_2",
+    #   "sigma",
+    #   "lambda_g",
+    #   "lambda_h",
+    #   "err",
+    #   "mu"
+    # ))) {
+    #   cli::cli_alert_info(
+    #     "The `par_vec` argument should be a named numeric atomic vector and in
+    #   the following order: theta_1, theta_2, sigma, lambda_g, lambda_h,
+    #   err, mu"
+    #   )
+    # }
   }
 
 
   #_____________________________________________________________________________
   # Specify params -------------------------------------------------------------
-  theta_1  <- par_vec[1]
-  theta_2  <- par_vec[2]
-  sigma    <- par_vec[3]
-  lambda_g <- par_vec[4]
-  lambda_h <- par_vec[5]
-  err      <- par_vec[6]
-  mu       <- par_vec[7]
+  # theta_1  <- par_vec[1]
+  # theta_2  <- par_vec[2]
+  # sigma    <- par_vec[3]
+  # lambda_g <- par_vec[4]
+  # lambda_h <- par_vec[5]
+  # err      <- par_vec[6]
+  # mu       <- par_vec[7]
   #_____________________________________________________________________________
   # Computations ---------------------------------------------------------------
 
@@ -93,13 +99,13 @@ get_ar1_tenure_full_likelihood <- function(
     h_1            = h_1,
     h_2            = h_2,
     h_3            = h_3,
-    err            = err,
-    mu             = mu,
     theta_1        = theta_1,
     theta_2        = theta_2,
     sigma          = sigma,
-    lambda_h       = lambda_h,
     lambda_g       = lambda_g,
+    lambda_h       = lambda_h,
+    err            = err,
+    mu             = mu,
     by_true_status = FALSE,
     skip_checks    = skip_checks
   )
@@ -169,16 +175,22 @@ get_ar1_tenure_full_likelihood <- function(
 #' lambda_g     = 2
 #' )
 get_ar1_tenure_individual_likelihood <- function(
-    st1_observed, st2_observed, st3_observed,
-    g_1, g_2, g_3,
-    h_1, h_2, h_3,
-    err,
-    mu,
+    st1_observed,
+    st2_observed,
+    st3_observed,
+    g_1,
+    g_2,
+    g_3,
+    h_1,
+    h_2,
+    h_3,
     theta_1,
     theta_2,
     sigma,
-    lambda_h,
     lambda_g,
+    lambda_h,
+    err,
+    mu,
     by_true_status = FALSE,
     skip_checks    = FALSE
 ){
@@ -233,13 +245,13 @@ get_ar1_tenure_individual_likelihood <- function(
     h_1          = h_1,
     h_2          = h_2,
     h_3          = h_3,
-    err          = err,
-    mu           = mu,
     theta_1      = theta_1,
     theta_2      = theta_2,
     sigma        = sigma,
-    lambda_h     = lambda_h,
     lambda_g     = lambda_g,
+    lambda_h     = lambda_h,
+    err          = err,
+    mu           = mu,
     skip_checks  = skip_checks
   )
 
@@ -420,23 +432,31 @@ get_ar1_tenure_individual_likelihood <- function(
 #' lambda_g     = 2
 #' )
 get_ar1_tenure_joint_probability <- function(
-    st1_observed, st2_observed, st3_observed,
-    st1_true, st2_true, st3_true,
-    g_1, g_2, g_3,
-    h_1, h_2, h_3,
-    err,
-    mu,
+    st1_observed,
+    st2_observed,
+    st3_observed,
+    st1_true,
+    st2_true,
+    st3_true,
+    g_1,
+    g_2,
+    g_3,
+    h_1,
+    h_2,
+    h_3,
     theta_1,
     theta_2,
     sigma,
-    lambda_h,
     lambda_g,
+    lambda_h,
+    err,
+    mu,
     skip_checks  = FALSE
   ) {
 
   #_____________________________________________________________________________
   # Arguments-------------------------------------------------------------------
-  p_err   <- pnorm(err)
+  p_err     <- pnorm(err)
   p_theta_1 <- pnorm(theta_1)
   p_theta_2 <- pnorm(theta_2)
   p_mu      <- pnorm(mu)
@@ -455,37 +475,37 @@ get_ar1_tenure_joint_probability <- function(
 
   #_____________________________________________________________________________
   # Misclassify Q1--------------------------------------------------------------
-  p_misclass_1 <- p_err^(st1_observed * st1_true + (1 - st1_observed) * (1 - st1_true)) * # no error
-    (1 - p_err)^((1 - st1_observed) * st1_true + st1_observed * (1 - st1_true))           # error
+  p_misclass_1 <- pnorm(err)^(st1_observed * st1_true + (1 - st1_observed) * (1 - st1_true)) * # no error
+    (1 - pnorm(err))^((1 - st1_observed) * st1_true + st1_observed * (1 - st1_true))           # error
 
   #_____________________________________________________________________________
   # Misclassify Q2--------------------------------------------------------------
-  p_misclass_2 <- p_err^(st2_observed * st2_true + (1 - st2_observed) * (1 - st2_true)) * # no error
-    (1 - p_err)^((1 - st2_observed) * st2_true + st2_observed * (1 - st2_true))           # error
+  p_misclass_2 <- pnorm(err)^(st2_observed * st2_true + (1 - st2_observed) * (1 - st2_true)) * # no error
+    (1 - pnorm(err))^((1 - st2_observed) * st2_true + st2_observed * (1 - st2_true))           # error
 
   #_____________________________________________________________________________
   # Misclassify Q3--------------------------------------------------------------
-  p_misclass_3 <- p_err^(st3_observed * st3_true + (1 - st3_observed) * (1 - st3_true)) * # no error
-    (1 - p_err)^((1 - st3_observed) * st3_true + st3_observed * (1 - st3_true))           # error
+  p_misclass_3 <- pnorm(err)^(st3_observed * st3_true + (1 - st3_observed) * (1 - st3_true)) * # no error
+    (1 - pnorm(err))^((1 - st3_observed) * st3_true + st3_observed * (1 - st3_true))           # error
 
   #_____________________________________________________________________________
   # S1* in Q1 ----------------------------------------------------------------
-  p_employed_q1 <- p_mu^st1_true * # empl
-    (1 - p_mu)^(1 - st1_true)      # unempl
+  p_employed_q1 <- pnorm(mu)^st1_true * # empl
+    (1 - pnorm(mu))^(1 - st1_true)      # unempl
 
   #_____________________________________________________________________________
   # S2*|S1*---------------------------------------------------------------------
-  p_trans_q2 <- p_theta_1^(st1_true * st2_true) *      # S*2 = 1 | S*1 = 1
-    (1 - p_theta_1)^(st1_true * (1 - st2_true)) *      # S*2 = 0 | S*1 = 1
-    p_theta_2^((1 - st1_true) * st2_true) *            # S*2 = 1 | S*1 = 0
-    (1 - p_theta_2)^((1 - st1_true) * (1 - st2_true))  # S*2 = 0 | S*1 = 0
+  p_trans_q2 <- pnorm(theta_1)^(st1_true * st2_true) *      # S*2 = 1 | S*1 = 1
+    (1 - pnorm(theta_1))^(st1_true * (1 - st2_true)) *      # S*2 = 0 | S*1 = 1
+    pnorm(theta_2)^((1 - st1_true) * st2_true) *            # S*2 = 1 | S*1 = 0
+    (1 - pnorm(theta_2))^((1 - st1_true) * (1 - st2_true))  # S*2 = 0 | S*1 = 0
 
   #_____________________________________________________________________________
   # S3*|S2*---------------------------------------------------------------------
-  p_trans_q3 <- p_theta_1^(st2_true * st3_true) *      # S*3 = 1 | S*2 = 1
-    (1 - p_theta_1)^(st2_true * (1 - st3_true)) *      # S*3 = 0 | S*2 = 1
-    p_theta_2^((1 - st2_true) * st3_true) *            # S*3 = 1 | S*2 = 0
-    (1 - p_theta_2)^((1 - st2_true) * (1 - st3_true))  # S*3 = 0 | S*2 = 0
+  p_trans_q3 <- pnorm(theta_1)^(st2_true * st3_true) *      # S*3 = 1 | S*2 = 1
+    (1 - pnorm(theta_1))^(st2_true * (1 - st3_true)) *      # S*3 = 0 | S*2 = 1
+    pnorm(theta_2)^((1 - st2_true) * st3_true) *            # S*3 = 1 | S*2 = 0
+    (1 - pnorm(theta_2))^((1 - st2_true) * (1 - st3_true))  # S*3 = 0 | S*2 = 0
 
   #_____________________________________________________________________________
   # tenure Q1-------------------------------------------------------------------
@@ -561,7 +581,7 @@ get_ar1_tenure_joint_probability <- function(
       x    = g_3 - 0.375,
       mean = 0,
       sd   = sigma
-    )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(st1_observed*(1 - st1_true) + (1 - st1_observed)*st1_true) ) *
+    )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_true) ) *
     ex_gaussian_density(
       g_3,
       sigma,
@@ -590,7 +610,7 @@ get_ar1_tenure_joint_probability <- function(
       x    = h_3 - 0.375,
       mean = 0,
       sd   = sigma
-    )^( (1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*(st1_observed*(1 - st1_true) + (1 - st1_observed)*st1_true) ) *
+    )^( (1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_true ) *
     ex_gaussian_density(
       h_3,
       sigma,
@@ -634,38 +654,6 @@ get_ar1_tenure_joint_probability <- function(
   # Return------------------------------------------------------------------
   lik
 
-  #
-  # # Compute the probability
-  # probability <- err^(st1_observed * st1_true + (1 - st1_observed) * (1 - st1_true)) *
-  #   (1 - err)^((1 - st1_observed) * st1_true + st1_observed * (1 - st1_true)) *
-  #   err^(st2_observed * st2_true + (1 - st2_observed) * (1 - st2_true)) *
-  #   (1 - err)^((1 - st2_observed) * st2_true + st2_observed * (1 - st2_true)) *
-  #   err^(st3_observed * st3_true + (1 - st3_observed) * (1 - st3_true)) *
-  #   (1 - err)^((1 - st3_observed) * st3_true + st3_observed * (1 - st3_true)) *
-  #   mu^st1_true * (1 - mu)^(1 - st1_true) *
-  #   theta_1^(st1_true * st2_true) * (1 - theta_1)^(st1_true * (1 - st2_true)) *
-  #   theta_2^((1 - st1_true) * st2_true) * (1 - theta_2)^((1 - st1_true) * (1 - st2_true)) *
-  #   theta_1^(st2_true * st3_true) * (1 - theta_1)^(st2_true * (1 - st3_true)) *
-  #   theta_2^((1 - st2_true) * st3_true) * (1 - theta_2)^((1 - st2_true) * (1 - st3_true)) *
-  #   ex_gaussian_density(g_1, sigma, lambda_g)^st1_observed *
-  #   ex_gaussian_density(h_1, sigma, lambda_h)^(1 - st1_observed) *
-  #   dnorm(g_2 - g_1 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^(st2_observed * st1_observed * st1_true * st2_true) *
-  #   dnorm(g_2 - 0.125, mean = 0, sd = sigma)^(st2_observed * st2_true * (1 - st1_true)) *
-  #   ex_gaussian_density(g_2, sigma, lambda_g)^st2_observed * ((1 - st2_true) + st2_true * (1 - st1_observed) * st1_true) *
-  #   dnorm(h_2 - h_1 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st2_observed) * (1 - st1_observed) * (1 - st1_true) * (1 - st2_true)) *
-  #   dnorm(h_2 - 0.125, mean = 0, sd = sigma)^((1 - st2_observed) * (1 - st2_true) * st1_true) *
-  #   ex_gaussian_density(h_2, sigma, lambda_h)^((1 - st2_observed) * (st2_true + (1 - st2_true) * st1_observed * (1 - st1_true))) *
-  #   dnorm(g_3 - g_1 - 0.5, mean = 0, sd = sqrt(2 * sigma^2))^(st3_observed * st2_observed * st1_observed * st3_true * (1 - st2_true) * st1_true) *
-  #   dnorm(g_3 - g_2 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^(st3_observed * st2_observed * st2_true * st3_true) *
-  #   dnorm(g_3 - 0.125, mean = 0, sd = sigma)^(st3_observed * st3_true * (1 - st2_true)) *
-  #   ex_gaussian_density(g_3, sigma, lambda_g)^st3_observed * ((1 - st3_true) + st3_true * (1 - st2_observed) * st2_true * ((1 - st1_observed) + (1 - st1_true))) *
-  #   dnorm(h_3 - h_1 - 0.5, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st3_observed) * (1 - st2_observed) * (1 - st1_observed) * (1 - st3_true) * st2_true * (1 - st1_true)) *
-  #   dnorm(h_3 - h_2 - 0.25, mean = 0, sd = sqrt(2 * sigma^2))^((1 - st3_observed) * (1 - st2_observed) * (1 - st2_true) * (1 - st3_true)) *
-  #   dnorm(h_3 - 0.125, mean = 0, sd = sigma)^((1 - st3_observed) * (1 - st3_true) * st2_true) *
-  #   ex_gaussian_density(h_3, sigma, lambda_h)^((1 - st3_observed) * (st3_true + (1 - st3_true) * st2_observed * (1 - st2_true) * (st1_observed + st1_true)))
-  #
-  # Return the computed probability
-  #return(probability)
 }
 
 
@@ -702,7 +690,7 @@ ex_gaussian_density <- function(x, sigma, lambda, own_func = FALSE) {
       #___________________________________________________________________________
       # Integrand-----------------------------------------------------------------
       integrand <- function(z) {
-        dnorm(z, mean = 0, sd = sigma) * dexp(x - z, rate = lambda)
+        dnorm(z, mean = 0, sd = sigma) * dexp(x - z, rate = 1/lambda)
       }
       #___________________________________________________________________________
       # Integrate-----------------------------------------------------------------

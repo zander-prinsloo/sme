@@ -1,13 +1,13 @@
 ## code to prepare `sim-tenure-data` dataset goes here
 
 sim_tenure_ar1 <- function(n        = 100000,
-                           theta1   = 1.65,
-                           theta2   = -1.65,
+                           theta1   = 1.645,
+                           theta2   = -1.645,
                            sigma    = 0.1, # 0.3-0.6
-                           lambda_g = 1/3,
-                           lambda_h = 1/3,
+                           lambda_g = 3, # mean of 3
+                           lambda_h = 3, # mean of 3
                            mu       = 0,
-                           err      = 1.65,
+                           err      = 1.96,
                            seed     = 1234){
   set.seed(seed)
   # time 1-----------
@@ -60,6 +60,7 @@ sim_tenure_ar1 <- function(n        = 100000,
   err3 <- rbinom(n    = n,
                  size = 1,
                  prob = pnorm(err))
+  # note: err == 1 => correctly classified
 
   # data frame-----------
   #______________________
@@ -76,9 +77,9 @@ sim_tenure_ar1 <- function(n        = 100000,
   #___________________________________________
   df <- df |>
     ftransform(
-      s1obs = ifelse(err1 == 1, abs(1 - s1true), s1true),
-      s2obs = ifelse(err2 == 1, abs(1 - s2true), s2true),
-      s3obs = ifelse(err3 == 1, abs(1 - s3true), s3true)
+      s1obs = ifelse(err1 == 1, s1true, abs(1 - s1true)),
+      s2obs = ifelse(err2 == 1, s2true, abs(1 - s2true)),
+      s3obs = ifelse(err3 == 1, s3true, abs(1 - s3true))
     )
 
   s1obs <- df$s1obs
@@ -86,13 +87,13 @@ sim_tenure_ar1 <- function(n        = 100000,
   s3obs <- df$s3obs
   # Tenure------------------------------------
   #___________________________________________
-  g1true              <- rexp(n = n, rate = lambda_g)
+  g1true              <- rexp(n = n, rate = 1/lambda_g) # mean = 1/lambda
   g1true[s1true == 0] <- 0
   g2true              <- s2true*(g1true + 0.25) + (1 - s2true)*0
   g3true              <- s3true*(g2true + 0.25) + (1 - s3true)*0
-  k1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_g)
-  k2                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_g)
-  k3                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_g)
+  k1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_g) # mean = 1/lambda
+  k2                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_g)
+  k3                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_g)
   u_g1                <- rnorm(n = n, mean = 0, sd = sigma)
   u_g2                <- rnorm(n = n, mean = 0, sd = sigma)
   u_g3                <- rnorm(n = n, mean = 0, sd = sigma)
@@ -102,13 +103,13 @@ sim_tenure_ar1 <- function(n        = 100000,
 
   # Unempl Duration---------------------------
   #___________________________________________
-  h1true              <- rexp(n = n, rate = lambda_h)
+  h1true              <- rexp(n = n, rate = 1/lambda_h) # mean = 1/lambda
   h1true[s1true == 1] <- 0
   h2true              <- (1 - s2true)*(h1true + 0.25) + s2true*0
   h3true              <- (1 - s3true)*(h2true + 0.25) + s3true*0
-  l1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_h)
-  l2                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_h)
-  l3                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = 1/lambda_h)
+  l1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_h) # mean = 1/lambda
+  l2                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_h)
+  l3                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_h)
   u_h1                <- rnorm(n = n, mean = 0, sd = sigma)
   u_h2                <- rnorm(n = n, mean = 0, sd = sigma)
   u_h3                <- rnorm(n = n, mean = 0, sd = sigma)

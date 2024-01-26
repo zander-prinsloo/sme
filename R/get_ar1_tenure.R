@@ -509,15 +509,15 @@ get_ar1_tenure_joint_probability <- function(
 
   #_____________________________________________________________________________
   # tenure Q1-------------------------------------------------------------------
-  p_tenure_q1 <- ex_gaussian_density(g_1,
-                                     sigma,
-                                     lambda_g)^st1_observed           # s1 = 1
+  p_tenure_q1 <- ex_gaussian_density(x      = g_1,
+                                     sigma  = sigma,
+                                     lambda = lambda_g)^st1_observed           # s1 = 1
 
   #_____________________________________________________________________________
   # unemployment duration Q1----------------------------------------------------
-  p_unempl_dur_q1 <- ex_gaussian_density(h_1,
-                                         sigma,
-                                         lambda_h)^(1 - st1_observed) # s1 = 0
+  p_unempl_dur_q1 <- ex_gaussian_density(x      = h_1,
+                                         sigma  = sigma,
+                                         lambda = lambda_h)^(1 - st1_observed) # s1 = 0
 
   #_____________________________________________________________________________
   # tenure Q2-------------------------------------------------------------------
@@ -536,9 +536,12 @@ get_ar1_tenure_joint_probability <- function(
       x      = g_2,
       sigma  = sigma,
       lambda = lambda_g
-    )^(st2_observed*((1 - st2_true) +                  # S*2 = 0, S2 = 1
-               st2_true*(1 - st1_observed)*st1_true))  # S*2 = 1, S*1 = 1, S2 = 1, S1 = 0
-
+    )^(st2_observed*(1 - st2_true)) *# S*2 = 0, S2 = 1
+    ex_gaussian_density(
+      x      = g_2 - 0.25,
+      sigma  = sigma,
+      lambda = lambda_g
+    )^(st2_observed*(st2_true*(1 - st1_observed)*st1_true))   # S*2 = 1, S*1 = 1, S2 = 1, S1 = 0
   #_____________________________________________________________________________
   # unemployment duration Q2----------------------------------------------------
   p_unempl_dur_q2 <-
@@ -556,8 +559,12 @@ get_ar1_tenure_joint_probability <- function(
       x      = h_2,
       sigma  = sigma,
       lambda = lambda_h
-    )^((1 - st2_observed)*(st2_true +
-                    (1 - st2_true)*st1_observed*(1 - st1_true)))
+    )^((1 - st2_observed)*(st2_true)) *            #
+    ex_gaussian_density(
+      x      = h_2 - 0.25,
+      sigma  = sigma,
+      lambda = lambda_h
+    )^((1 - st2_observed)*(1 - st2_true)*st1_observed*(1 - st1_true))
 
   #_____________________________________________________________________________
   # tenure Q3-------------------------------------------------------------------
@@ -583,10 +590,15 @@ get_ar1_tenure_joint_probability <- function(
       sd   = sigma
     )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_true) ) *
     ex_gaussian_density(
-      g_3,
-      sigma,
-      lambda_g
-    )^(st3_observed*((1 - st3_true) + st3_true*(1 - st2_observed)*st2_true*((1 - st1_observed) + (1 - st1_true))))
+      x      = g_3,
+      sigma  = sigma,
+      lambda = lambda_g
+    )^(st3_observed*(1 - st3_true)) *
+    ex_gaussian_density(
+      x      = g_3 - 0.5,
+      sigma  = sigma,
+      lambda = lambda_g
+    )^(st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_observed)*st1_true)
 
   #_____________________________________________________________________________
   # unemployment duration Q3----------------------------------------------------
@@ -612,11 +624,15 @@ get_ar1_tenure_joint_probability <- function(
       sd   = sigma
     )^( (1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_true ) *
     ex_gaussian_density(
-      h_3,
-      sigma,
-      lambda_h
-    )^((1 - st3_observed)*(st3_true +
-                      (1 - st3_true)*st2_observed*(1 - st2_true)*st1_observed*(1 - st1_true)))
+      x      = h_3,
+      sigma  = sigma,
+      lambda = lambda_h
+    )^((1 - st3_observed)*st3_true) *
+    ex_gaussian_density(
+      x      = h_3 - 0.5,
+      sigma  = sigma,
+      lambda = lambda_h
+    )^((1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_observed*(1 - st1_true))
 
 #
 #   return(
@@ -672,11 +688,10 @@ get_ar1_tenure_joint_probability <- function(
 #' @param x numeric value
 #' @param sigma numeric: standard deviation for gaussian component
 #' @param lambda numeric: parameter of exponential component - mean of exponential
-#' @param own_func logical: if FALSE, use `gamlss.dist::dexGAUS` in the backend (experimental)
 #'
 #' @return numeric atomic vector length 1
 #' @keywords internal
-ex_gaussian_density <- function(x, sigma, lambda, own_func = FALSE) {
+ex_gaussian_density <- function(x, sigma, lambda) {
 
   #_____________________________________________________________________________
   # Arguments-------------------------------------------------------------------
@@ -686,33 +701,33 @@ ex_gaussian_density <- function(x, sigma, lambda, own_func = FALSE) {
    if (sigma < 0) {
      cli::cli_abort("`sigma` parameter must be non-negative, as parameter of gaussian distribution")
    }
-   if (own_func) {
-      #___________________________________________________________________________
-      # Integrand-----------------------------------------------------------------
-      integrand <- function(z) {
-        dnorm(z, mean = 0, sd = sigma) * dexp(x - z, rate = 1/lambda)
-      }
-      #___________________________________________________________________________
-      # Integrate-----------------------------------------------------------------
-      result <- integrate(integrand, lower = -Inf, upper = x)
-
-      #___________________________________________________________________________
-      # Return--------------------------------------------------------------------
-      return(result$value)
-
-    } else {
+   # if (own_func) {
+   #    #___________________________________________________________________________
+   #    # Integrand-----------------------------------------------------------------
+   #    integrand <- function(z) {
+   #      dnorm(z, mean = 0, sd = sigma) * dexp(x - z, rate = 1/lambda)
+   #    }
+   #    #___________________________________________________________________________
+   #    # Integrate-----------------------------------------------------------------
+   #    result <- integrate(integrand, lower = -Inf, upper = x)
+   #
+   #    #___________________________________________________________________________
+   #    # Return--------------------------------------------------------------------
+   #    return(result$value)
+   #
+   #  } else {
     #___________________________________________________________________________
     # Use package---------------------------------------------------------------
     result <- gamlss.dist::dexGAUS(
       x     = x,
       mu    = 0,
       sigma = sigma,
-      nu    = lambda
+      nu    = lambda # mean = lambda
     )
     #___________________________________________________________________________
     # Return--------------------------------------------------------------------
     return(result)
-  }
+  #}
 
 
 }

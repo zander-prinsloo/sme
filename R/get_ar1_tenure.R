@@ -409,7 +409,7 @@ get_ar1_tenure_individual_likelihood <- function(
 #' @return numeric: joint probability
 #' @export
 #'
-#' @example
+#' @examples
 #' get_ar1_tenure_joint_probability(
 #' st1_observed = 1,
 #' st2_observed = 1,

@@ -263,7 +263,7 @@ estimate_ar1_tenure <- function(
   sme_estimation <- maxLik(
     fn_ll,
     start = init_params,
-    method = "NM",
+    method = "BFGS",
     constraints = list(
       ineqA = matrix(
         c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
@@ -287,7 +287,7 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM",
+      method = "BFGS",
       constraints = list(
         ineqA = matrix(
           c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
@@ -311,7 +311,7 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM",
+      method = "BFGS",
       constraints = list(
         ineqA = matrix(
           c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma

@@ -70,7 +70,7 @@ estimate_ar1_sym <- function(
       log()
 
     log_lik <- (log_lik*weights) |>
-      sum()
+      fsum()
 
     # Return
     return(log_lik)
@@ -175,24 +175,24 @@ estimate_ar1_sym <- function(
       rbind(
         c("theta_01" = 0.957,
           "theta_02" = -1.465,
-          "pi"       = 1.929,
+          "err"       = 1.929,
           "mu"       = -0.0038),
         c(
           "theta_01" = 1.199927414,
           "theta_02" = -2,
-          "pi"       = 2.9,
+          "err"       = 2.9,
           "mu"       = -0.018828444
         ),
         c(
           "theta_01" = 1.98,
           "theta_02" = -1.89,
-          "pi"       = 1.86,
+          "err"       = 1.86,
           "mu"       = -0.02
         ),
         c(
           "theta_01" = 1.389,
           "theta_02" = -1.364,
-          "pi"       = 3,
+          "err"       = 3,
           "mu"       = -0.02
         ),
         init_params
@@ -281,28 +281,28 @@ estimate_ar1_sym <- function(
     sme_estimation,
     vcov. = vcov(sme_estimation),
     g = "1 - pnorm(theta_01)",
-    parameterNames = c("theta_01", "theta_02", "pi", "mu")
+    parameterNames = c("theta_01", "theta_02", "err", "mu")
   )
   SME_JobExit_rate <- SME_JobExit[1][[1]]
   SME_JobEntry <- car::deltaMethod(
     sme_estimation,
     vcov. = vcov(sme_estimation),
     g = "pnorm(theta_02)",
-    parameterNames = c("theta_01", "theta_02", "pi", "mu")
+    parameterNames = c("theta_01", "theta_02", "err", "mu")
   )
   SME_JobEntry_rate <- SME_JobEntry[1][[1]]
   SME_Empl <- car::deltaMethod(
     sme_estimation,
     vcov. = vcov(sme_estimation),
     g = "pnorm(mu)",
-    parameterNames = c("theta_01", "theta_02", "pi", "mu")
+    parameterNames = c("theta_01", "theta_02", "err", "mu")
   )
   SME_Empl_rate <- SME_Empl[1][[1]]
   SME_Misclass <- car::deltaMethod(
     sme_estimation,
     vcov. = vcov(sme_estimation),
-    g = "1 - pnorm(pi)",
-    parameterNames = c("theta_01", "theta_02", "pi", "mu")
+    g = "1 - pnorm(err)",
+    parameterNames = c("theta_01", "theta_02", "err", "mu")
   )
   SME_Misclass_rate <- SME_Misclass[1][[1]]
 

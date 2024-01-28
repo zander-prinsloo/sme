@@ -259,21 +259,23 @@ estimate_ar1_tenure <- function(
 
   #_____________________________________________________________________________
   # Local Estimation -----------------------------------------------------------
+  A_mat <- matrix(
+    c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
+      0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
+      0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
+      0, 0, 0, 0, 0, 1, 0), # Constraint for err
+    ncol = 7,
+    byrow = TRUE
+  )
+  B_mat <- ineqB = c(0.0001, 0.0001, 0.0001, 0.0001)
 
-  sme_estimation <- maxLik(
+  sme_estimation <- maxLik::maxBFGS(
     fn_ll,
     start = init_params,
-    method = "BFGS",
+    #method = "BFGS",
     constraints = list(
-      ineqA = matrix(
-        c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-          0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-          0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-          0, 0, 0, 0, 0, 1, 0), # Constraint for err
-        ncol = 7,
-        byrow = TRUE
-      ),
-      ineqB = c(0, 0, 0, 0)
+      ineqA = A_mat,
+      ineqB = B_mat
     )
 
   )
@@ -284,20 +286,13 @@ estimate_ar1_tenure <- function(
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik(
+    sme_estimation <- maxLik::maxBFGS(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "BFGS",
+      #method = "BFGS",
       constraints = list(
-        ineqA = matrix(
-          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-            0, 0, 0, 0, 0, 1, 0), # Constraint for err
-          ncol = 7,
-          byrow = TRUE
-        ),
-        ineqB = c(0, 0, 0, 0)
+        ineqA = A_mat,
+        ineqB = B_mat
       )
     )
     if (verbose) {
@@ -308,20 +303,13 @@ estimate_ar1_tenure <- function(
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik(
+    sme_estimation <- maxLik::maxBFGS(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "BFGS",
+      #method = "BFGS",
       constraints = list(
-        ineqA = matrix(
-          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-            0, 0, 0, 0, 0, 1, 0), # Constraint for err
-          ncol = 7,
-          byrow = TRUE
-        ),
-        ineqB = c(0, 0, 0, 0)
+        ineqA = A_mat,
+        ineqB = B_mat
       )
     )
     if (verbose) {
@@ -332,20 +320,13 @@ estimate_ar1_tenure <- function(
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik(
+    sme_estimation <- maxLik::maxBFGS(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "BFGS",
+      #method = "BFGS",
       constraints = list(
-        ineqA = matrix(
-          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-            0, 0, 0, 0, 0, 1, 0), # Constraint for err
-          ncol = 7,
-          byrow = TRUE
-        ),
-        ineqB = c(0, 0, 0, 0)
+        ineqA = A_mat,
+        ineqB = B_mat
       )
     )
 

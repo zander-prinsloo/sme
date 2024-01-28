@@ -698,8 +698,9 @@ ex_gaussian_density <- function(x, sigma, lambda) {
    if (lambda < 0) {
      cli::cli_abort("`lambda` parameter must be non-negative, as parameter of exponential distribution")
    }
-   if (sigma < 0) {
-     cli::cli_abort("`sigma` parameter must be non-negative, as parameter of gaussian distribution")
+   if (sigma <= 0) {
+     cli::cli_alert_info("`sigma` parameter must be postive, as parameter of gaussian distribution. It has been set to 1e-13")
+     sigma <- 1e-13
    }
    # if (own_func) {
    #    #___________________________________________________________________________

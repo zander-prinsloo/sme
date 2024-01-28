@@ -267,7 +267,7 @@ estimate_ar1_tenure <- function(
     ncol = 7,
     byrow = TRUE
   )
-  B_mat <- ineqB = c(-0.0001, -0.0001, -0.0001, -0.0001)
+  B_mat <- c(-0.0001, -0.0001, -0.0001, -0.0001)
 
   sme_estimation <- maxLik::maxBFGS(
     fn_ll,

@@ -24,7 +24,8 @@ estimate_ar1_tenure <- function(
     global_est           = FALSE,
     global_specification = NULL,
     verbose              = FALSE,
-    global_n             = 100
+    global_n             = 100,
+    global_iterations    = 50
 ){
 
   #_____________________________________________________________________________
@@ -205,7 +206,7 @@ estimate_ar1_tenure <- function(
     )
     control_object <- mlrMBO::makeMBOControl() |>
       mlrMBO::setMBOControlTermination(
-                                       iters = 50) |>
+                                       iters = global_iterations) |>
       mlrMBO::setMBOControlInfill(
                                   crit = mlrMBO::makeMBOInfillCritEI())
 

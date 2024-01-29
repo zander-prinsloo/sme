@@ -468,13 +468,14 @@ get_ar1_tenure_individual_likelihood <- function(
 
 
   if (!by_true_status) {
-
     #lik <- fsum(lik)
     #lik <- max(lik, 0.0000000001)
-    lik[, (names(lik)) := lapply(.SD, function(x) {
-        x[x < 0] <- 0.00000001
-      return(x)
-    })]
+    # lik[,
+    #     (names(lik)) := lapply(.SD,
+    #                              function(x) {
+    #                                x[x < 0] <- 0.00000001
+    #                                x
+    #                                })]
     lik <- rowSums(lik)
   }
 
@@ -886,6 +887,7 @@ get_ar1_tenure_joint_probability <- function(
 
   #_____________________________________________________________________________
   # Return------------------------------------------------------------------
+  lik <- max(lik, 1e-13)
   lik
 
 }

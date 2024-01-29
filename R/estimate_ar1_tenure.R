@@ -98,14 +98,14 @@ estimate_ar1_tenure <- function(
       theta_2_lower  <- -2.5
       theta_2_upper  <- -1
 
-      sigma_upper    <-  1
       sigma_lower    <-  0
+      sigma_upper    <-  1
 
-      lambda_g_upper <-  8
       lambda_g_lower <-  5
+      lambda_g_upper <-  8
 
-      lambda_h_upper <-  4
       lambda_h_lower <-  1
+      lambda_h_upper <-  4
 
       err_lower      <-  0.5
       err_upper      <-  3
@@ -221,51 +221,51 @@ estimate_ar1_tenure <- function(
     df_initial_search <- df_initial_search |>
       rbind(
         init_params,
-        c(
-          "theta_1"   = 1.6,
-          "theta_2"   = -1.6,
-          "sigma"     = 0.15,
-          "lambda_g"  = 0.3,
-          "lambda_h"  = 0.3,
-          "err"       = 1.6,
-          "mu"        = 0.1
-        ),
-        c(
-          "theta_1"   = 1.7,
-          "theta_2"   = -1.7,
-          "sigma"     = 0.05,
-          "lambda_g"  = 0.4,
-          "lambda_h"  = 0.4,
-          "err"       = 1.5,
-          "mu"        = -0.1
-        ),
-        c(
-          "theta_1"   = 1.32,
-          "theta_2"   = -1.87,
-          "sigma"     = 2.47e-05,
-          "lambda_g"  = 4.85,
-          "lambda_h"  = 2.52,
-          "err"       = 0.00324,
-          "mu"        = -0.292
-        ),
-        c(
-          "theta_1"   = 1.32,
-          "theta_2"   = -1.87,
-          "sigma"     = 2.47e-05,
-          "lambda_g"  = 4.85,
-          "lambda_h"  = 2.52,
-          "err"       = 0.00324,
-          "mu"        = -0.292
-        ),
-        c(
-          "theta_1"   = 1.2950126839  ,
-          "theta_2"   = -2.2073950339  ,
-          "sigma"     = 0.0001000000 ,
-          "lambda_g"  = 5.9594590423  ,
-          "lambda_h"  = 1.5448323110,
-          "err"       = 0.0001171644,
-          "mu"        = 0.2465914012
-        ),
+        # c(
+        #   "theta_1"   = 1.6,
+        #   "theta_2"   = -1.6,
+        #   "sigma"     = 0.15,
+        #   "lambda_g"  = 0.3,
+        #   "lambda_h"  = 0.3,
+        #   "err"       = 1.6,
+        #   "mu"        = 0.1
+        # ),
+        # c(
+        #   "theta_1"   = 1.7,
+        #   "theta_2"   = -1.7,
+        #   "sigma"     = 0.05,
+        #   "lambda_g"  = 0.4,
+        #   "lambda_h"  = 0.4,
+        #   "err"       = 1.5,
+        #   "mu"        = -0.1
+        # ),
+        # c(
+        #   "theta_1"   = 1.32,
+        #   "theta_2"   = -1.87,
+        #   "sigma"     = 2.47e-05,
+        #   "lambda_g"  = 4.85,
+        #   "lambda_h"  = 2.52,
+        #   "err"       = 0.00324,
+        #   "mu"        = -0.292
+        #),
+        # c(
+        #   "theta_1"   = 1.32,
+        #   "theta_2"   = -1.87,
+        #   "sigma"     = 2.47e-05,
+        #   "lambda_g"  = 4.85,
+        #   "lambda_h"  = 2.52,
+        #   "err"       = 0.00324,
+        #   "mu"        = -0.292
+        # ),
+        # c(
+        #   "theta_1"   = 1.2950126839  ,
+        #   "theta_2"   = -2.2073950339  ,
+        #   "sigma"     = 0.0001000000 ,
+        #   "lambda_g"  = 5.9594590423  ,
+        #   "lambda_h"  = 1.5448323110,
+        #   "err"       = 0.0001171644,
+        #   "mu"        = 0.2465914012
+        # ),
         c(
           "theta_1"   = 1.8,
           "theta_2"   = -1.8,

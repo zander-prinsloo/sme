@@ -194,15 +194,14 @@ estimate_ar1_tenure <- function(
     obj_func <- smoof::makeSingleObjectiveFunction(
       fn       = fn_ll,
       minimize = FALSE,
-      noisy    = TRUE,
+      noisy    = verbose,
       par.set  = par_space
     )
     sur_learner <- mlr::makeLearner(
       cl           = "regr.km",
       predict.type = "se",
       covtype      = "matern3_2",
-      control      = list(trace = FALSE
-      )
+      control      = list(trace = FALSE)
     )
     control_object <- mlrMBO::makeMBOControl() |>
       mlrMBO::setMBOControlTermination(
@@ -304,6 +303,7 @@ estimate_ar1_tenure <- function(
 
     init_params <- global_model$x |>
       unlist()
+    names(init_params) <- names(global_model$x)
 
   } else {
     global_model <- NULL
@@ -321,10 +321,10 @@ estimate_ar1_tenure <- function(
   )
   B_mat <- c(-0.0001, -0.0001, -0.0001, -0.0001)
 
-  sme_estimation <- maxLik::maxBFGS(
+  sme_estimation <- maxLik::maxLik(
     fn_ll,
     start = init_params,
-    #method = "BFGS",
+    method = "BFGS",
     constraints = list(
       ineqA = A_mat,
       ineqB = B_mat
@@ -333,12 +333,13 @@ estimate_ar1_tenure <- function(
   )
   if (verbose) {
     print(sme_estimation |> summary())
+    print(sme_estimation$estimate |> names())
   }
   if (maxLik::returnCode(sme_estimation) == 1) {
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik::maxBFGS(
+    sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
       #method = "BFGS",
@@ -355,7 +356,7 @@ estimate_ar1_tenure <- function(
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik::maxBFGS(
+    sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
       #method = "BFGS",
@@ -372,10 +373,10 @@ estimate_ar1_tenure <- function(
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik::maxBFGS(
+    sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      #method = "BFGS",
+      method = "BFGS",
       constraints = list(
         ineqA = A_mat,
         ineqB = B_mat

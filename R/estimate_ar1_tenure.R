@@ -113,7 +113,7 @@ estimate_ar1_tenure <- function(
       mu_lower       <- -0.5
       mu_upper       <-  0.5
 
-   # } #else if (
+    } #else if (
       #!is.list(global_specification) |
       # !names(global_specification) %chin% c(
       #   "theta_1_lower",
@@ -320,7 +320,7 @@ estimate_ar1_tenure <- function(
     ncol = 7,
     byrow = TRUE
   )
-  B_mat <- c(-0.0001, -0.0001, -0.0001, -0.0001)
+  B_mat <- c(-0.000001, -0.000001, -0.000001, -0.000001)
 
   sme_estimation <- maxLik::maxLik(
     fn_ll,

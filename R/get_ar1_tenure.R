@@ -73,42 +73,73 @@ get_ar1_tenure_full_likelihood <- function(
   # mu       <- par_vec[7]
   #_____________________________________________________________________________
   # Computations ---------------------------------------------------------------
+  lik <- get_ar1_tenure_individual_likelihood(
+      st1_observed   = st1_observed,
+      st2_observed   = st2_observed,
+      st3_observed   = st3_observed,
+      g_1            = g_1,
+      g_2            = g_2,
+      g_3            = g_3,
+      h_1            = h_1,
+      h_2            = h_2,
+      h_3            = h_3,
+      theta_1        = theta_1,
+      theta_2        = theta_2,
+      sigma          = sigma,
+      lambda_g       = lambda_g,
+      lambda_h       = lambda_h,
+      err            = err,
+      mu             = mu,
+      by_true_status = FALSE,
+      skip_checks    = skip_checks
+  )
 
-  ind_lik_vec <- Vectorize(
-    FUN = get_ar1_tenure_individual_likelihood,
-    vectorize.args = c(
-      "st1_observed",
-      "st2_observed",
-      "st3_observed",
-      "g_1",
-      "g_2",
-      "g_3",
-      "h_1",
-      "h_2",
-      "h_3"
-    ),
-    SIMPLIFY = TRUE
-  )
-  lik <- ind_lik_vec(
-    st1_observed   = st1_observed,
-    st2_observed   = st2_observed,
-    st3_observed   = st3_observed,
-    g_1            = g_1,
-    g_2            = g_2,
-    g_3            = g_3,
-    h_1            = h_1,
-    h_2            = h_2,
-    h_3            = h_3,
-    theta_1        = theta_1,
-    theta_2        = theta_2,
-    sigma          = sigma,
-    lambda_g       = lambda_g,
-    lambda_h       = lambda_h,
-    err            = err,
-    mu             = mu,
-    by_true_status = FALSE,
-    skip_checks    = skip_checks
-  )
+
+
+
+
+
+
+  # ind_lik_vec <- Vectorize(
+  #   FUN = get_ar1_tenure_individual_likelihood,
+  #   vectorize.args = c(
+  #     "st1_observed",
+  #     "st2_observed",
+  #     "st3_observed",
+  #     "g_1",
+  #     "g_2",
+  #     "g_3",
+  #     "h_1",
+  #     "h_2",
+  #     "h_3"
+  #   ),
+  #   SIMPLIFY = TRUE
+  # )
+  # lik <- ind_lik_vec(
+  #   st1_observed   = st1_observed,
+  #   st2_observed   = st2_observed,
+  #   st3_observed   = st3_observed,
+  #   g_1            = g_1,
+  #   g_2            = g_2,
+  #   g_3            = g_3,
+  #   h_1            = h_1,
+  #   h_2            = h_2,
+  #   h_3            = h_3,
+  #   theta_1        = theta_1,
+  #   theta_2        = theta_2,
+  #   sigma          = sigma,
+  #   lambda_g       = lambda_g,
+  #   lambda_h       = lambda_h,
+  #   err            = err,
+  #   mu             = mu,
+  #   by_true_status = FALSE,
+  #   skip_checks    = skip_checks
+  # )
+
+
+
+
+
 
   # lik <- get_ar1_tenure_individual_likelihood(
   #   st1_observed   = st1_observed,
@@ -232,30 +263,215 @@ get_ar1_tenure_individual_likelihood <- function(
 
   #_____________________________________________________________________________
   # Calculation-----------------------------------------------------------------
-  lik <- get_ar1_tenure_joint_probability(
-    st1_observed = st1_observed,
-    st2_observed = st2_observed,
-    st3_observed = st3_observed,
-    st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
-    st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
-    st3_true     = c(1, 0, 1, 0, 1, 0, 1, 0),
-    g_1          = g_1,
-    g_2          = g_2,
-    g_3          = g_3,
-    h_1          = h_1,
-    h_2          = h_2,
-    h_3          = h_3,
-    theta_1      = theta_1,
-    theta_2      = theta_2,
-    sigma        = sigma,
-    lambda_g     = lambda_g,
-    lambda_h     = lambda_h,
-    err          = err,
-    mu           = mu,
-    skip_checks  = skip_checks
+  # lik <- get_ar1_tenure_joint_probability(
+  #   st1_observed = st1_observed,
+  #   st2_observed = st2_observed,
+  #   st3_observed = st3_observed,
+  #   st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
+  #   st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
+  #   st3_true     = c(1, 0, 1, 0, 1, 0, 1, 0),
+  #   g_1          = g_1,
+  #   g_2          = g_2,
+  #   g_3          = g_3,
+  #   h_1          = h_1,
+  #   h_2          = h_2,
+  #   h_3          = h_3,
+  #   theta_1      = theta_1,
+  #   theta_2      = theta_2,
+  #   sigma        = sigma,
+  #   lambda_g     = lambda_g,
+  #   lambda_h     = lambda_h,
+  #   err          = err,
+  #   mu           = mu,
+  #   skip_checks  = skip_checks
+  # )
+
+
+  lik <- data.table::data.table(
+    true_111 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 1,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_110 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 1,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_101 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 0,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_100 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 0,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_011 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 1,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_010 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 1,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_001 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 0,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_000 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 0,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    )
   )
 
 
+  if (!by_true_status) {
+    lik <- rowSums(lik)
+    #lik <- fsum(lik)
+    #lik <- max(lik, 0.0000000001)
+  }
 
 #
 #   #_____________________________________________________________________________
@@ -369,10 +585,7 @@ get_ar1_tenure_individual_likelihood <- function(
   #     lambda_g     = lambda_g
   # )
 
-  if (!by_true_status) {
-    lik <- fsum(lik)
-    lik <- max(lik, 0.0000000001)
-  }
+
 
   #_____________________________________________________________________________
   # Return----------------------------------------------------------------------

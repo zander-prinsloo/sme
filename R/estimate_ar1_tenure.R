@@ -91,20 +91,26 @@ estimate_ar1_tenure <- function(
 
     if (is.null(global_specification)) {
 
-      theta_1_lower  <- -3
-      theta_1_upper  <-  3
-      theta_2_lower  <- -3
-      theta_2_upper  <-  3
-      sigma_upper    <-  3
+      theta_1_lower  <-  1
+      theta_1_upper  <-  2.5
+
+      theta_2_lower  <- -2.5
+      theta_2_upper  <- -1
+
+      sigma_upper    <-  1
       sigma_lower    <-  0
-      lambda_g_upper <-  5
-      lambda_g_lower <-  0
-      lambda_h_upper <-  5
-      lambda_h_lower <-  0
-      err_lower      <- -3
+
+      lambda_g_upper <-  8
+      lambda_g_lower <-  5
+
+      lambda_h_upper <-  4
+      lambda_h_lower <-  1
+
+      err_lower      <-  0.5
       err_upper      <-  3
-      mu_lower       <- -3
-      mu_upper       <-  3
+
+      mu_lower       <- -0.5
+      mu_upper       <-  0.5
 
     } else if (
       !is.list(global_specification) |
@@ -232,7 +238,53 @@ estimate_ar1_tenure <- function(
           "lambda_h"  = 0.4,
           "err"       = 1.5,
           "mu"        = -0.1
+        ),
+        c(
+          "theta_1"   = 1.32,
+          "theta_2"   = -1.87,
+          "sigma"     = 2.47e-05,
+          "lambda_g"  = 4.85,
+          "lambda_h"  = 2.52,
+          "err"       = 0.00324,
+          "mu"        = -0.292
+        ),
+        c(
+          "theta_1"   = 1.32,
+          "theta_2"   = -1.87,
+          "sigma"     = 2.47e-05,
+          "lambda_g"  = 4.85,
+          "lambda_h"  = 2.52,
+          "err"       = 0.00324,
+          "mu"        = -0.292
+        ),
+        c(
+          "theta_1"   = 1.2950126839  ,
+          "theta_2"   = -2.2073950339  ,
+          "sigma"     = 0.0001000000 ,
+          "lambda_g"  = 5.9594590423  ,
+          "lambda_h"  = 1.5448323110,
+          "err"       = 0.0001171644,
+          "mu"        = 0.2465914012
+        ),
+        c(
+          "theta_1"   = 1.8,
+          "theta_2"   = -1.8,
+          "sigma"     = 0.2 ,
+          "lambda_g"  = 6.5  ,
+          "lambda_h"  = 2.7,
+          "err"       = 1.98,
+          "mu"        = 0.2465914012
+        ),
+        c(
+          "theta_1"   = 1.96,
+          "theta_2"   = -1.89,
+          "sigma"     = 0.3 ,
+          "lambda_g"  = 6.5  ,
+          "lambda_h"  = 2.7,
+          "err"       = 1.2,
+          "mu"        = -0.2
         )
+
       )
     df_initial_search$y <- apply(
       df_initial_search,

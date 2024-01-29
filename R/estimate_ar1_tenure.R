@@ -113,29 +113,29 @@ estimate_ar1_tenure <- function(
       mu_lower       <- -0.5
       mu_upper       <-  0.5
 
-    } else if (
-      !is.list(global_specification) |
-      !names(global_specification) %chin% c(
-        "theta_1_lower",
-        "theta_1_upper",
-        "theta_2_lower",
-        "theta_2_upper",
-        "sigma_upper",
-        "sigma_lower",
-        "lambda_g_upper",
-        "lambda_g_lower",
-        "lambda_h_upper",
-        "lambda_h_lower",
-        "err_lower",
-        "err_upper",
-        "mu_lower",
-        "mu_upper"
-      )
-    ) {
-      cli::cli_abort(
-        "If global specification is non NULL, then should be a list giving upper
-        and lower bounds for each parameter"
-      )
+   # } #else if (
+      #!is.list(global_specification) |
+      # !names(global_specification) %chin% c(
+      #   "theta_1_lower",
+      #   "theta_1_upper",
+      #   "theta_2_lower",
+      #   "theta_2_upper",
+      #   "sigma_upper",
+      #   "sigma_lower",
+      #   "lambda_g_upper",
+      #   "lambda_g_lower",
+      #   "lambda_h_upper",
+      #   "lambda_h_lower",
+      #   "err_lower",
+      #   "err_upper",
+      #   "mu_lower",
+      #   "mu_upper"
+      # )
+    # ) {
+    #   cli::cli_abort(
+    #     "If global specification is non NULL, then should be a list giving upper
+    #     and lower bounds for each parameter"
+    #   )
     } else {
       theta_1_lower  <- global_specification$theta_1_lower
       theta_1_upper  <- global_specification$theta_1_upper

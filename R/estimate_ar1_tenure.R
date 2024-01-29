@@ -182,8 +182,8 @@ estimate_ar1_tenure <- function(
       ),
       makeNumericParam(
         "err",
-        lower = sigma_lower,
-        upper = sigma_upper
+        lower = err_lower,
+        upper = err_upper
       ),
       makeNumericParam(
         "mu",

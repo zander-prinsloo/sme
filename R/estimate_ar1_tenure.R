@@ -98,7 +98,7 @@ estimate_ar1_tenure <- function(
       theta_2_lower  <- -2.5
       theta_2_upper  <- -1
 
-      sigma_lower    <-  0
+      sigma_lower    <-  0.00001
       sigma_upper    <-  1
 
       lambda_g_lower <-  5
@@ -307,6 +307,9 @@ estimate_ar1_tenure <- function(
       unlist()
     names(init_params) <- names(global_model$x)
 
+    if (verbose == T) {
+      print(init_params)
+    }
   } else {
     global_model <- NULL
   }
@@ -318,7 +321,7 @@ estimate_ar1_tenure <- function(
       0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
       0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
       0, 0, 0, 0, 0, 1, 0), # Constraint for err
-    ncol = 7,
+    ncol  = 7,
     byrow = TRUE
   )
   B_mat <- c(-0.000001, -0.000001, -0.000001, -0.000001)

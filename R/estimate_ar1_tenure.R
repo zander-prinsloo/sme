@@ -136,7 +136,8 @@ estimate_ar1_tenure <- function(
     #     "If global specification is non NULL, then should be a list giving upper
     #     and lower bounds for each parameter"
     #   )
-    } else {
+    #}
+    else {
       theta_1_lower  <- global_specification$theta_1_lower
       theta_1_upper  <- global_specification$theta_1_upper
       theta_2_lower  <- global_specification$theta_2_lower
@@ -343,7 +344,7 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      #method = "BFGS",
+      method = "BFGS",
       constraints = list(
         ineqA = A_mat,
         ineqB = B_mat
@@ -360,7 +361,7 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      #method = "BFGS",
+      method = "BFGS",
       constraints = list(
         ineqA = A_mat,
         ineqB = B_mat

@@ -24,7 +24,8 @@ estimate_ar1_tenure <- function(
     global_est           = FALSE,
     global_specification = NULL,
     verbose              = FALSE,
-    global_n             = 100
+    global_n             = 100,
+    global_iterations    = 50
 ){
 
   #_____________________________________________________________________________
@@ -91,45 +92,52 @@ estimate_ar1_tenure <- function(
 
     if (is.null(global_specification)) {
 
-      theta_1_lower  <- -3
-      theta_1_upper  <-  3
-      theta_2_lower  <- -3
-      theta_2_upper  <-  3
-      sigma_upper    <-  3
-      sigma_lower    <-  0
-      lambda_g_upper <-  5
-      lambda_g_lower <-  0
-      lambda_h_upper <-  5
-      lambda_h_lower <-  0
-      err_lower      <- -3
-      err_upper      <-  3
-      mu_lower       <- -3
-      mu_upper       <-  3
+      theta_1_lower  <-  1
+      theta_1_upper  <-  2.5
 
-    } else if (
-      !is.list(global_specification) |
-      !names(global_specification) %chin% c(
-        "theta_1_lower",
-        "theta_1_upper",
-        "theta_2_lower",
-        "theta_2_upper",
-        "sigma_upper",
-        "sigma_lower",
-        "lambda_g_upper",
-        "lambda_g_lower",
-        "lambda_h_upper",
-        "lambda_h_lower",
-        "err_lower",
-        "err_upper",
-        "mu_lower",
-        "mu_upper"
-      )
-    ) {
-      cli::cli_abort(
-        "If global specification is non NULL, then should be a list giving upper
-        and lower bounds for each parameter"
-      )
-    } else {
+      theta_2_lower  <- -2.5
+      theta_2_upper  <- -1
+
+      sigma_lower    <-  -5
+      sigma_upper    <-  1
+
+      lambda_g_lower <-  1
+      lambda_g_upper <-  8
+
+      lambda_h_lower <-  1
+      lambda_h_upper <-  8
+
+      err_lower      <-  0.5
+      err_upper      <-  3
+
+      mu_lower       <- -0.5
+      mu_upper       <-  0.5
+
+    } #else if (
+      #!is.list(global_specification) |
+      # !names(global_specification) %chin% c(
+      #   "theta_1_lower",
+      #   "theta_1_upper",
+      #   "theta_2_lower",
+      #   "theta_2_upper",
+      #   "sigma_upper",
+      #   "sigma_lower",
+      #   "lambda_g_upper",
+      #   "lambda_g_lower",
+      #   "lambda_h_upper",
+      #   "lambda_h_lower",
+      #   "err_lower",
+      #   "err_upper",
+      #   "mu_lower",
+      #   "mu_upper"
+      # )
+    # ) {
+    #   cli::cli_abort(
+    #     "If global specification is non NULL, then should be a list giving upper
+    #     and lower bounds for each parameter"
+    #   )
+    #}
+    else {
       theta_1_lower  <- global_specification$theta_1_lower
       theta_1_upper  <- global_specification$theta_1_upper
       theta_2_lower  <- global_specification$theta_2_lower
@@ -175,8 +183,8 @@ estimate_ar1_tenure <- function(
       ),
       makeNumericParam(
         "err",
-        lower = sigma_lower,
-        upper = sigma_upper
+        lower = err_lower,
+        upper = err_upper
       ),
       makeNumericParam(
         "mu",
@@ -188,19 +196,18 @@ estimate_ar1_tenure <- function(
     obj_func <- smoof::makeSingleObjectiveFunction(
       fn       = fn_ll,
       minimize = FALSE,
-      noisy    = TRUE,
+      noisy    = verbose,
       par.set  = par_space
     )
     sur_learner <- mlr::makeLearner(
       cl           = "regr.km",
       predict.type = "se",
       covtype      = "matern3_2",
-      control      = list(trace = FALSE
-      )
+      control      = list(trace = FALSE)
     )
     control_object <- mlrMBO::makeMBOControl() |>
       mlrMBO::setMBOControlTermination(
-                                       iters = 50) |>
+                                       iters = global_iterations) |>
       mlrMBO::setMBOControlInfill(
                                   crit = mlrMBO::makeMBOInfillCritEI())
 
@@ -215,24 +222,70 @@ estimate_ar1_tenure <- function(
     df_initial_search <- df_initial_search |>
       rbind(
         init_params,
+        # c(
+        #   "theta_1"   = 1.6,
+        #   "theta_2"   = -1.6,
+        #   "sigma"     = 0.15,
+        #   "lambda_g"  = 0.3,
+        #   "lambda_h"  = 0.3,
+        #   "err"       = 1.6,
+        #   "mu"        = 0.1
+        # ),
+        # c(
+        #   "theta_1"   = 1.7,
+        #   "theta_2"   = -1.7,
+        #   "sigma"     = 0.05,
+        #   "lambda_g"  = 0.4,
+        #   "lambda_h"  = 0.4,
+        #   "err"       = 1.5,
+        #   "mu"        = -0.1
+        # ),
+        # c(
+        #   "theta_1"   = 1.32,
+        #   "theta_2"   = -1.87,
+        #   "sigma"     = 2.47e-05,
+        #   "lambda_g"  = 4.85,
+        #   "lambda_h"  = 2.52,
+        #   "err"       = 0.00324,
+        #   "mu"        = -0.292
+        #),
+        # c(
+        #   "theta_1"   = 1.32,
+        #   "theta_2"   = -1.87,
+        #   "sigma"     = 2.47e-05,
+        #   "lambda_g"  = 4.85,
+        #   "lambda_h"  = 2.52,
+        #   "err"       = 0.00324,
+        #   "mu"        = -0.292
+        # ),
+        # c(
+        #   "theta_1"   = 1.2950126839  ,
+        #   "theta_2"   = -2.2073950339  ,
+        #   "sigma"     = 0.0001000000 ,
+        #   "lambda_g"  = 5.9594590423  ,
+        #   "lambda_h"  = 1.5448323110,
+        #   "err"       = 0.0001171644,
+        #   "mu"        = 0.2465914012
+        # ),
         c(
-          "theta_1"   = 1.6,
-          "theta_2"   = -1.6,
-          "sigma"     = 0.15,
-          "lambda_g"  = 0.3,
-          "lambda_h"  = 0.3,
-          "err"       = 1.6,
-          "mu"        = 0.1
+          "theta_1"   = 1.8,
+          "theta_2"   = -1.8,
+          "sigma"     = 0.2 ,
+          "lambda_g"  = 6.5  ,
+          "lambda_h"  = 2.7,
+          "err"       = 1.98,
+          "mu"        = 0.2465914012
         ),
         c(
-          "theta_1"   = 1.7,
-          "theta_2"   = -1.7,
-          "sigma"     = 0.05,
-          "lambda_g"  = 0.4,
-          "lambda_h"  = 0.4,
-          "err"       = 1.5,
-          "mu"        = -0.1
+          "theta_1"   = 1.96,
+          "theta_2"   = -1.89,
+          "sigma"     = 0.3 ,
+          "lambda_g"  = 6.5  ,
+          "lambda_h"  = 2.7,
+          "err"       = 1.2,
+          "mu"        = -0.2
         )
+
       )
     df_initial_search$y <- apply(
       df_initial_search,
@@ -252,53 +305,53 @@ estimate_ar1_tenure <- function(
 
     init_params <- global_model$x |>
       unlist()
+    names(init_params) <- names(global_model$x)
 
+    if (verbose == T) {
+      print(init_params)
+    }
   } else {
     global_model <- NULL
   }
 
   #_____________________________________________________________________________
   # Local Estimation -----------------------------------------------------------
+  # A_mat <- matrix(
+  #   c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
+  #     0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
+  #     0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
+  #     0, 0, 0, 0, 0, 1, 0), # Constraint for err
+  #   ncol  = 7,
+  #   byrow = TRUE
+  # )
+  # B_mat <- c(-0.000001, -0.000001, -0.000001, -0.000001)
 
-  sme_estimation <- maxLik(
+  sme_estimation <- maxLik::maxLik(
     fn_ll,
     start = init_params,
-    method = "NM",
-    constraints = list(
-      ineqA = matrix(
-        c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-          0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-          0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-          0, 0, 0, 0, 0, 1, 0), # Constraint for err
-        ncol = 7,
-        byrow = TRUE
-      ),
-      ineqB = c(0, 0, 0, 0)
-    )
+    method = "NM"#,
+    # constraints = list(
+    #   ineqA = A_mat,
+    #   ineqB = B_mat
+    # )
 
   )
   if (verbose) {
     print(sme_estimation |> summary())
+    print(sme_estimation$estimate |> names())
   }
   if (maxLik::returnCode(sme_estimation) == 1) {
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik(
+    sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM",
-      constraints = list(
-        ineqA = matrix(
-          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-            0, 0, 0, 0, 0, 1, 0), # Constraint for err
-          ncol = 7,
-          byrow = TRUE
-        ),
-        ineqB = c(0, 0, 0, 0)
-      )
+      method = "NM"#,
+      # constraints = list(
+      #   ineqA = A_mat,
+      #   ineqB = B_mat
+      # )
     )
     if (verbose) {
       print(sme_estimation |> summary())
@@ -308,21 +361,14 @@ estimate_ar1_tenure <- function(
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik(
+    sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM",
-      constraints = list(
-        ineqA = matrix(
-          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-            0, 0, 0, 0, 0, 1, 0), # Constraint for err
-          ncol = 7,
-          byrow = TRUE
-        ),
-        ineqB = c(0, 0, 0, 0)
-      )
+      method = "NM"#,
+      # constraints = list(
+      #   ineqA = A_mat,
+      #   ineqB = B_mat
+      # )
     )
     if (verbose) {
       print(sme_estimation |> summary())
@@ -332,21 +378,14 @@ estimate_ar1_tenure <- function(
     if (verbose) {
       cli::cli_alert_info("Re-estimating local by refreshing initial params")
     }
-    sme_estimation <- maxLik(
+    sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM",
-      constraints = list(
-        ineqA = matrix(
-          c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-            0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-            0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-            0, 0, 0, 0, 0, 1, 0), # Constraint for err
-          ncol = 7,
-          byrow = TRUE
-        ),
-        ineqB = c(0, 0, 0, 0)
-      )
+      method = "NM"#,
+      # constraints = list(
+      #   ineqA = A_mat,
+      #   ineqB = B_mat
+      # )
     )
 
     if (verbose) {

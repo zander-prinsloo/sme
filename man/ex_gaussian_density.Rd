@@ -11,7 +11,7 @@ ex_gaussian_density(x, sigma, lambda)
 
 \item{sigma}{numeric: standard deviation for gaussian component}
 
-\item{lambda}{numeric: parameter of exponential component}
+\item{lambda}{numeric: parameter of exponential component - mean of exponential}
 }
 \value{
 numeric atomic vector length 1

@@ -44,95 +44,30 @@ get_ar1_tenure_full_likelihood <- function(
       vectors for all three periods should all have the same length."
       )
     }
-    # if (!all(names(par_vec) == c(
-    #   "theta_1",
-    #   "theta_2",
-    #   "sigma",
-    #   "lambda_g",
-    #   "lambda_h",
-    #   "err",
-    #   "mu"
-    # ))) {
-    #   cli::cli_alert_info(
-    #     "The `par_vec` argument should be a named numeric atomic vector and in
-    #   the following order: theta_1, theta_2, sigma, lambda_g, lambda_h,
-    #   err, mu"
-    #   )
-    # }
   }
 
-
-  #_____________________________________________________________________________
-  # Specify params -------------------------------------------------------------
-  # theta_1  <- par_vec[1]
-  # theta_2  <- par_vec[2]
-  # sigma    <- par_vec[3]
-  # lambda_g <- par_vec[4]
-  # lambda_h <- par_vec[5]
-  # err      <- par_vec[6]
-  # mu       <- par_vec[7]
   #_____________________________________________________________________________
   # Computations ---------------------------------------------------------------
-
-  ind_lik_vec <- Vectorize(
-    FUN = get_ar1_tenure_individual_likelihood,
-    vectorize.args = c(
-      "st1_observed",
-      "st2_observed",
-      "st3_observed",
-      "g_1",
-      "g_2",
-      "g_3",
-      "h_1",
-      "h_2",
-      "h_3"
-    ),
-    SIMPLIFY = TRUE
+  lik <- get_ar1_tenure_individual_likelihood(
+      st1_observed   = st1_observed,
+      st2_observed   = st2_observed,
+      st3_observed   = st3_observed,
+      g_1            = g_1,
+      g_2            = g_2,
+      g_3            = g_3,
+      h_1            = h_1,
+      h_2            = h_2,
+      h_3            = h_3,
+      theta_1        = theta_1,
+      theta_2        = theta_2,
+      sigma          = sigma,
+      lambda_g       = lambda_g,
+      lambda_h       = lambda_h,
+      err            = err,
+      mu             = mu,
+      by_true_status = FALSE,
+      skip_checks    = skip_checks
   )
-  lik <- ind_lik_vec(
-    st1_observed   = st1_observed,
-    st2_observed   = st2_observed,
-    st3_observed   = st3_observed,
-    g_1            = g_1,
-    g_2            = g_2,
-    g_3            = g_3,
-    h_1            = h_1,
-    h_2            = h_2,
-    h_3            = h_3,
-    theta_1        = theta_1,
-    theta_2        = theta_2,
-    sigma          = sigma,
-    lambda_g       = lambda_g,
-    lambda_h       = lambda_h,
-    err            = err,
-    mu             = mu,
-    by_true_status = FALSE,
-    skip_checks    = skip_checks
-  )
-
-  # lik <- get_ar1_tenure_individual_likelihood(
-  #   st1_observed   = st1_observed,
-  #   st2_observed   = st2_observed,
-  #   st3_observed   = st3_observed,
-  #   g_1            = g_1,
-  #   g_2            = g_2,
-  #   g_3            = g_3,
-  #   h_1            = h_1,
-  #   h_2            = h_2,
-  #   h_3            = h_3,
-  #   err            = err,
-  #   mu             = mu,
-  #   theta_1        = theta_1,
-  #   theta_2        = theta_2,
-  #   sigma          = sigma,
-  #   lambda_h       = lambda_h,
-  #   lambda_g       = lambda_g,
-  #   by_true_status = FALSE
-  # )
-
-  # log_lik <- lik |>
-  #   log() |>
-  #   fsum()
 
   #_____________________________________________________________________________
   # Return --------------------------------------------------------------------
@@ -232,146 +167,187 @@ get_ar1_tenure_individual_likelihood <- function(
 
   #_____________________________________________________________________________
   # Calculation-----------------------------------------------------------------
-  lik <- get_ar1_tenure_joint_probability(
-    st1_observed = st1_observed,
-    st2_observed = st2_observed,
-    st3_observed = st3_observed,
-    st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
-    st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
-    st3_true     = c(1, 0, 1, 0, 1, 0, 1, 0),
-    g_1          = g_1,
-    g_2          = g_2,
-    g_3          = g_3,
-    h_1          = h_1,
-    h_2          = h_2,
-    h_3          = h_3,
-    theta_1      = theta_1,
-    theta_2      = theta_2,
-    sigma        = sigma,
-    lambda_g     = lambda_g,
-    lambda_h     = lambda_h,
-    err          = err,
-    mu           = mu,
-    skip_checks  = skip_checks
+  lik <- data.table::data.table(
+    true_111 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 1,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_110 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 1,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_101 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 0,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_100 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 1,
+      st2_true     = 0,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_011 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 1,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_010 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 1,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_001 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 0,
+      st3_true     = 1,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    ),
+    true_000 = get_ar1_tenure_joint_probability(
+      st1_observed = st1_observed,
+      st2_observed = st2_observed,
+      st3_observed = st3_observed,
+      st1_true     = 0,
+      st2_true     = 0,
+      st3_true     = 0,
+      g_1          = g_1,
+      g_2          = g_2,
+      g_3          = g_3,
+      h_1          = h_1,
+      h_2          = h_2,
+      h_3          = h_3,
+      theta_1      = theta_1,
+      theta_2      = theta_2,
+      sigma        = sigma,
+      lambda_g     = lambda_g,
+      lambda_h     = lambda_h,
+      err          = err,
+      mu           = mu,
+      skip_checks  = skip_checks
+    )
   )
 
-
-
-#
-#   #_____________________________________________________________________________
-#   # Non-vec---------------------------------------------------------------------
-#   nonvec_func <- function(
-#     st1_observed,
-#     st2_observed,
-#     st3_observed,
-#     g_1,
-#     g_2,
-#     g_3,
-#     h_1,
-#     h_2,
-#     h_3,
-#     theta_1,
-#     theta_2,
-#     sigma,
-#     lambda_h,
-#     lambda_g,
-#     err,
-#     mu
-#   ){
-#     p <- get_ar1_tenure_joint_probability(
-#               st1_observed = st1_observed,
-#               st2_observed = st2_observed,
-#               st3_observed = st3_observed,
-#               st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
-#               st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
-#               st3_true     = c(1, 0, 1, 0, 1, 0, 1, 0),
-#               g_1          = g_1,
-#               g_2          = g_2,
-#               g_3          = g_3,
-#               h_1          = h_1,
-#               h_2          = h_2,
-#               h_3          = h_3,
-#               err          = err,
-#               mu           = mu,
-#               theta_1      = theta_1,
-#               theta_2      = theta_2,
-#               sigma        = sigma,
-#               lambda_h     = lambda_h,
-#               lambda_g     = lambda_g
-#     )
-#
-#     p
-#   }
-#   #_____________________________________________________________________________
-#   # Vectorize-------------------------------------------------------------------
-#   vec_func <- Vectorize(
-#     FUN            = nonvec_func,
-#     vectorize.args = c(
-#       "st1_observed",
-#       "st2_observed",
-#       "st3_observed",
-#       "g_1",
-#       "g_2",
-#       "g_3",
-#       "h_1",
-#       "h_2",
-#       "h_3",
-#       "theta_1",
-#       "theta_2",
-#       "sigma",
-#       "lambda_h",
-#       "lambda_g",
-#       "err",
-#       "mu"
-#     )
-#   )
-
-  #_____________________________________________________________________________
-  # Computations----------------------------------------------------------------
-  # lik <- get_ar1_sym_joint_probability_v(
-  #   st1_observed = st1_observed,
-  #   st2_observed = st2_observed,
-  #   st3_observed = st3_observed,
-  #   st1_true     = c(1, 1, 1, 1, 0, 0, 0, 0),
-  #   st2_true     = c(1, 1, 0, 0, 1, 1, 0, 0),
-  #   st3_true     = c(0, 1, 0, 1, 0, 1, 0, 1),
-  #   g_1          = g_1,
-  #   g_2          = g_2,
-  #   g_3          = g_3,
-  #   h_1          = h_1,
-  #   h_2          = h_2,
-  #   h_3          = h_3,
-  #   err          = err,
-  #   mu           = mu,
-  #   theta_1      = theta_1,
-  #   theta_2      = theta_2,
-  #   sigma        = sigma,
-  #   lambda_h     = lambda_h,
-  #   lambda_g     = lambda_g
-  # )
-
-  # lik <- vec_func(
-  #     st1_observed = st1_observed,
-  #     st2_observed = st2_observed,
-  #     st3_observed = st3_observed,
-  #     g_1          = g_1,
-  #     g_2          = g_2,
-  #     g_3          = g_3,
-  #     h_1          = h_1,
-  #     h_2          = h_2,
-  #     h_3          = h_3,
-  #     err          = err,
-  #     mu           = mu,
-  #     theta_1      = theta_1,
-  #     theta_2      = theta_2,
-  #     sigma        = sigma,
-  #     lambda_h     = lambda_h,
-  #     lambda_g     = lambda_g
-  # )
-
   if (!by_true_status) {
-    lik <- fsum(lik)
-    lik <- max(lik, 0.0000000001)
+    lik <- rowSums(lik)
   }
 
   #_____________________________________________________________________________
@@ -409,7 +385,7 @@ get_ar1_tenure_individual_likelihood <- function(
 #' @return numeric: joint probability
 #' @export
 #'
-#' @example
+#' @examples
 #' get_ar1_tenure_joint_probability(
 #' st1_observed = 1,
 #' st2_observed = 1,
@@ -460,6 +436,7 @@ get_ar1_tenure_joint_probability <- function(
   p_theta_1 <- pnorm(theta_1)
   p_theta_2 <- pnorm(theta_2)
   p_mu      <- pnorm(mu)
+  p_sigma   <- exp(sigma)
   if (!skip_checks) {
     if (lambda_h < 0) {
       cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
@@ -467,11 +444,10 @@ get_ar1_tenure_joint_probability <- function(
     if (lambda_g < 0) {
       cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
     }
-    if (sigma < 0) {
+    if (p_sigma < 0) {
       cli::cli_abort("Gaussian parameter `sigma` must be non-negative")
     }
   }
-
 
   #_____________________________________________________________________________
   # Misclassify Q1--------------------------------------------------------------
@@ -492,7 +468,7 @@ get_ar1_tenure_joint_probability <- function(
   # S1* in Q1 ----------------------------------------------------------------
   p_employed_q1 <- pnorm(mu)^st1_true * # empl
     (1 - pnorm(mu))^(1 - st1_true)      # unempl
-
+  #return(p_employed_q1)
   #_____________________________________________________________________________
   # S2*|S1*---------------------------------------------------------------------
   p_trans_q2 <- pnorm(theta_1)^(st1_true * st2_true) *      # S*2 = 1 | S*1 = 1
@@ -510,13 +486,13 @@ get_ar1_tenure_joint_probability <- function(
   #_____________________________________________________________________________
   # tenure Q1-------------------------------------------------------------------
   p_tenure_q1 <- ex_gaussian_density(x      = g_1,
-                                     sigma  = sigma,
+                                     sigma  = p_sigma,
                                      lambda = lambda_g)^st1_observed           # s1 = 1
 
   #_____________________________________________________________________________
   # unemployment duration Q1----------------------------------------------------
   p_unempl_dur_q1 <- ex_gaussian_density(x      = h_1,
-                                         sigma  = sigma,
+                                         sigma  = p_sigma,
                                          lambda = lambda_h)^(1 - st1_observed) # s1 = 0
 
   #_____________________________________________________________________________
@@ -525,21 +501,21 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x      = g_2 - g_1 - 0.25,
       mean   = 0,
-      sd     = sqrt(2 * sigma^2)
+      sd     = sqrt(2 * p_sigma^2)
     )^(st2_observed*st1_observed*st1_true*st2_true) *  # S*2 = 1, S*1 = 1, S2 = 1, S1 = 1
     dnorm(
       x      = g_2 - 0.125,
       mean   = 0,
-      sd     = sigma
+      sd     = p_sigma
     )^(st2_observed*st2_true*(1 - st1_true)) *         # S*2 = 1, S*1 = 0, S2 = 1, S1 = 0/1
     ex_gaussian_density(
       x      = g_2,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st2_observed*(1 - st2_true)) *# S*2 = 0, S2 = 1
     ex_gaussian_density(
       x      = g_2 - 0.25,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st2_observed*(st2_true*(1 - st1_observed)*st1_true))   # S*2 = 1, S*1 = 1, S2 = 1, S1 = 0
   #_____________________________________________________________________________
@@ -548,21 +524,21 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x      = h_2 - h_1 - 0.25,
       mean   = 0,
-      sd     = sqrt(2 * sigma^2)
+      sd     = sqrt(2 * p_sigma^2)
     )^((1 - st2_observed)*(1 - st1_observed)*(1 - st1_true)*(1 - st2_true)) * # S*2=0, S*1=0, S2=0, S1=0
     dnorm(
       x      = h_2 - 0.125,
       mean   = 0,
-      sd     = sigma
+      sd     = p_sigma
     )^( (1 - st2_observed)*(1 - st2_true)*st1_true ) *            #
     ex_gaussian_density(
       x      = h_2,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st2_observed)*(st2_true)) *            #
     ex_gaussian_density(
       x      = h_2 - 0.25,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st2_observed)*(1 - st2_true)*st1_observed*(1 - st1_true))
 
@@ -572,33 +548,73 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x    = g_3 - g_1 - 0.5,
       mean = 0,
-      sd   = sqrt(2*sigma^2)
+      sd   = sqrt(2*p_sigma^2)
     )^(st3_observed*(1 - st2_observed)*st1_observed*st3_true*st2_true*st1_true) *
     dnorm(
       x    = g_3 - g_2 - 0.25,
       mean = 0,
-      sd   = sqrt(2 * sigma^2)
+      sd   = sqrt(2 * p_sigma^2)
     )^(st3_observed*st2_observed*st2_true*st3_true) *
     dnorm(
       x    = g_3 - 0.125,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^(st3_observed*st3_true*(1 - st2_true)) *
     dnorm(
       x    = g_3 - 0.375,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_true) ) *
     ex_gaussian_density(
       x      = g_3,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st3_observed*(1 - st3_true)) *
     ex_gaussian_density(
       x      = g_3 - 0.5,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_observed)*st1_true)
+
+  # return(list(g_3 - g_2 - 0.25,
+  #             0,
+  #             sqrt(2 * p_sigma^2),
+  #             st3_observed*st2_observed*st2_true*st3_true ))
+  # return(
+  #   list(
+  #     dnorm(
+  #       x    = g_3 - g_1 - 0.5,
+  #       mean = 0,
+  #       sd   = sqrt(2*p_sigma^2)
+  #     )^(st3_observed*(1 - st2_observed)*st1_observed*st3_true*st2_true*st1_true),
+  #     dnorm(
+  #       x    = g_3 - g_2 - 0.25,
+  #       mean = 0,
+  #       sd   = sqrt(2 * p_sigma^2)
+  #     )^(st3_observed*st2_observed*st2_true*st3_true)*1000000,
+  #     dnorm(
+  #       x    = g_3 - 0.125,
+  #       mean = 0,
+  #       sd   = p_sigma
+  #     )^(st3_observed*st3_true*(1 - st2_true)),
+  #     dnorm(
+  #       x    = g_3 - 0.375,
+  #       mean = 0,
+  #       sd   = p_sigma
+  #     )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_true) ),
+  #     ex_gaussian_density(
+  #       x      = g_3,
+  #       sigma  = p_sigma,
+  #       lambda = lambda_g
+  #     )^(st3_observed*(1 - st3_true)),
+  #     ex_gaussian_density(
+  #       x      = g_3 - 0.5,
+  #       sigma  = p_sigma,
+  #       lambda = lambda_g
+  #     )^(st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_observed)*st1_true)
+  # ))
+  #
+
 
   #_____________________________________________________________________________
   # unemployment duration Q3----------------------------------------------------
@@ -606,51 +622,51 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x    = h_3 - h_1 - 0.5,
       mean = 0,
-      sd   = sqrt(2 * sigma^2)
+      sd   = sqrt(2 * p_sigma^2)
     )^((1 - st3_observed)*st2_observed*(1 - st1_observed)*(1 - st3_true)*(1 - st2_true)*(1 - st1_true)) *
     dnorm(
       x    = h_3 - h_2 - 0.25,
       mean = 0,
-      sd   = sqrt(2 * sigma^2)
+      sd   = sqrt(2 * p_sigma^2)
     )^((1 - st3_observed)*(1 - st2_observed)*(1 - st2_true)*(1 - st3_true)) *
     dnorm(
       x    = h_3 - 0.125,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^((1 - st3_observed)*(1 - st3_true)*st2_true) *
     dnorm(
       x    = h_3 - 0.375,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^( (1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_true ) *
     ex_gaussian_density(
       x      = h_3,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st3_observed)*st3_true) *
     ex_gaussian_density(
       x      = h_3 - 0.5,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_observed*(1 - st1_true))
 
-#
-#   return(
-#     list(
-#       p_misclass_1,
-#         p_misclass_2,
-#         p_misclass_3,
-#         p_employed_q1,
-#         p_trans_q2,
-#         p_trans_q3,
-#         p_tenure_q1,
-#         p_unempl_dur_q1,
-#         p_tenure_q2,
-#         p_unempl_dur_q2, #
-#         p_tenure_q3,
-#         p_unempl_dur_q3  #
-#     )
-#   )
+
+  # return(
+  #   list(
+  #     p_misclass_1,
+  #       p_misclass_2,
+  #       p_misclass_3,
+  #       p_employed_q1,
+  #       p_trans_q2,
+  #       p_trans_q3,
+  #       p_tenure_q1,     # 322344
+  #       p_unempl_dur_q1,
+  #       p_tenure_q2,     # 1836
+  #       p_unempl_dur_q2, #
+  #       p_tenure_q3,     # 7686>1
+  #       p_unempl_dur_q3  #
+  #   )
+  # )
   #_____________________________________________________________________________
   # Likelihood------------------------------------------------------------------
   lik <- p_misclass_1 *
@@ -668,14 +684,10 @@ get_ar1_tenure_joint_probability <- function(
 
   #_____________________________________________________________________________
   # Return------------------------------------------------------------------
+  lik <- pmax(lik, 1e-100)
   lik
 
 }
-
-
-
-
-
 
 
 
@@ -698,24 +710,9 @@ ex_gaussian_density <- function(x, sigma, lambda) {
    if (lambda < 0) {
      cli::cli_abort("`lambda` parameter must be non-negative, as parameter of exponential distribution")
    }
-   if (sigma < 0) {
-     cli::cli_abort("`sigma` parameter must be non-negative, as parameter of gaussian distribution")
+   if (sigma <= 0) {
+     cli::cli_alert_info("`sigma` parameter must be postive, as parameter of gaussian distribution. It has been set to 1e-13")
    }
-   # if (own_func) {
-   #    #___________________________________________________________________________
-   #    # Integrand-----------------------------------------------------------------
-   #    integrand <- function(z) {
-   #      dnorm(z, mean = 0, sd = sigma) * dexp(x - z, rate = 1/lambda)
-   #    }
-   #    #___________________________________________________________________________
-   #    # Integrate-----------------------------------------------------------------
-   #    result <- integrate(integrand, lower = -Inf, upper = x)
-   #
-   #    #___________________________________________________________________________
-   #    # Return--------------------------------------------------------------------
-   #    return(result$value)
-   #
-   #  } else {
     #___________________________________________________________________________
     # Use package---------------------------------------------------------------
     result <- gamlss.dist::dexGAUS(
@@ -727,8 +724,6 @@ ex_gaussian_density <- function(x, sigma, lambda) {
     #___________________________________________________________________________
     # Return--------------------------------------------------------------------
     return(result)
-  #}
-
 
 }
 

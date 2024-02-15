@@ -278,28 +278,28 @@ estimate_ar1_sym <- function(
 
   # Implied Probs ----
   SME_JobExit <- car::deltaMethod(
-    sme_estimation,
+    object = sme_estimation,
     vcov. = vcov(sme_estimation),
     g = "1 - pnorm(theta_01)",
     parameterNames = c("theta_01", "theta_02", "err", "mu")
   )
   SME_JobExit_rate <- SME_JobExit[1][[1]]
   SME_JobEntry <- car::deltaMethod(
-    sme_estimation,
+    object = sme_estimation,
     vcov. = vcov(sme_estimation),
     g = "pnorm(theta_02)",
     parameterNames = c("theta_01", "theta_02", "err", "mu")
   )
   SME_JobEntry_rate <- SME_JobEntry[1][[1]]
   SME_Empl <- car::deltaMethod(
-    sme_estimation,
+    object = sme_estimation,
     vcov. = vcov(sme_estimation),
     g = "pnorm(mu)",
     parameterNames = c("theta_01", "theta_02", "err", "mu")
   )
   SME_Empl_rate <- SME_Empl[1][[1]]
   SME_Misclass <- car::deltaMethod(
-    sme_estimation,
+    object = sme_estimation,
     vcov. = vcov(sme_estimation),
     g = "1 - pnorm(err)",
     parameterNames = c("theta_01", "theta_02", "err", "mu")

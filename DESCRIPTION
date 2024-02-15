@@ -12,6 +12,12 @@ LazyData: true
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Imports: 
+    cli,
+    collapse (>= 2.0.9),
+    data.table, 
+    maxLik, 
+    mlrMBO
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 2.10)

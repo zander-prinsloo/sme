@@ -20,7 +20,8 @@ estimate_ar1_tenure(
   global_est = FALSE,
   global_specification = NULL,
   verbose = FALSE,
-  global_n = 100
+  global_n = 100,
+  global_iterations = 50
 )
 }
 \arguments{

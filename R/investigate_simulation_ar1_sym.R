@@ -16,6 +16,10 @@
 # table(df_sim$s2true, df_sim$s3true)
 # table(df_sim$s1true, df_sim$s3true)
 #
+# table(df_sim$s1true, df_sim$s1obs)
+# table(df_sim$s2true, df_sim$s2obs)
+# table(df_sim$s3true, df_sim$s3obs)
+
 # get_ar1_sym_joint_probability(
 #   st2_observed = 0,
 #   st1_observed = 0,
@@ -141,12 +145,22 @@
 #   verbose          = TRUE
 # )
 #
+# results_ar1_sym_simulation_FUNC$loglik
+# get_ar1_sym_full_likelihood(
+#   st3_observed     = df_sim$s3obs,
+#   st2_observed     = df_sim$s2obs,
+#   st1_observed     = df_sim$s1obs,
+#   par_vec      = c(
+#     1.65,
+#     -1.65,
+#     1.65,
+#     0
+#   )
+# ) |> log() |> sum()
+# #
+# #
 #
-
-
-
-
-
+#
 
 
 

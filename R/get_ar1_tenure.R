@@ -679,6 +679,7 @@ get_ar1_tenure_joint_probability <- function(
   p_theta_1 <- pnorm(theta_1)
   p_theta_2 <- pnorm(theta_2)
   p_mu      <- pnorm(mu)
+  p_sigma   <- exp(sigma)
   if (!skip_checks) {
     if (lambda_h < 0) {
       cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
@@ -686,7 +687,7 @@ get_ar1_tenure_joint_probability <- function(
     if (lambda_g < 0) {
       cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
     }
-    if (sigma < 0) {
+    if (p_sigma < 0) {
       cli::cli_abort("Gaussian parameter `sigma` must be non-negative")
     }
   }
@@ -729,13 +730,13 @@ get_ar1_tenure_joint_probability <- function(
   #_____________________________________________________________________________
   # tenure Q1-------------------------------------------------------------------
   p_tenure_q1 <- ex_gaussian_density(x      = g_1,
-                                     sigma  = sigma,
+                                     sigma  = p_sigma,
                                      lambda = lambda_g)^st1_observed           # s1 = 1
 
   #_____________________________________________________________________________
   # unemployment duration Q1----------------------------------------------------
   p_unempl_dur_q1 <- ex_gaussian_density(x      = h_1,
-                                         sigma  = sigma,
+                                         sigma  = p_sigma,
                                          lambda = lambda_h)^(1 - st1_observed) # s1 = 0
 
   #_____________________________________________________________________________
@@ -744,21 +745,21 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x      = g_2 - g_1 - 0.25,
       mean   = 0,
-      sd     = sqrt(2 * sigma^2)
+      sd     = sqrt(2 * p_sigma^2)
     )^(st2_observed*st1_observed*st1_true*st2_true) *  # S*2 = 1, S*1 = 1, S2 = 1, S1 = 1
     dnorm(
       x      = g_2 - 0.125,
       mean   = 0,
-      sd     = sigma
+      sd     = p_sigma
     )^(st2_observed*st2_true*(1 - st1_true)) *         # S*2 = 1, S*1 = 0, S2 = 1, S1 = 0/1
     ex_gaussian_density(
       x      = g_2,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st2_observed*(1 - st2_true)) *# S*2 = 0, S2 = 1
     ex_gaussian_density(
       x      = g_2 - 0.25,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st2_observed*(st2_true*(1 - st1_observed)*st1_true))   # S*2 = 1, S*1 = 1, S2 = 1, S1 = 0
   #_____________________________________________________________________________
@@ -767,21 +768,21 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x      = h_2 - h_1 - 0.25,
       mean   = 0,
-      sd     = sqrt(2 * sigma^2)
+      sd     = sqrt(2 * p_sigma^2)
     )^((1 - st2_observed)*(1 - st1_observed)*(1 - st1_true)*(1 - st2_true)) * # S*2=0, S*1=0, S2=0, S1=0
     dnorm(
       x      = h_2 - 0.125,
       mean   = 0,
-      sd     = sigma
+      sd     = p_sigma
     )^( (1 - st2_observed)*(1 - st2_true)*st1_true ) *            #
     ex_gaussian_density(
       x      = h_2,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st2_observed)*(st2_true)) *            #
     ex_gaussian_density(
       x      = h_2 - 0.25,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st2_observed)*(1 - st2_true)*st1_observed*(1 - st1_true))
 
@@ -791,31 +792,31 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x    = g_3 - g_1 - 0.5,
       mean = 0,
-      sd   = sqrt(2*sigma^2)
+      sd   = sqrt(2*p_sigma^2)
     )^(st3_observed*(1 - st2_observed)*st1_observed*st3_true*st2_true*st1_true) *
     dnorm(
       x    = g_3 - g_2 - 0.25,
       mean = 0,
-      sd   = sqrt(2 * sigma^2)
+      sd   = sqrt(2 * p_sigma^2)
     )^(st3_observed*st2_observed*st2_true*st3_true) *
     dnorm(
       x    = g_3 - 0.125,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^(st3_observed*st3_true*(1 - st2_true)) *
     dnorm(
       x    = g_3 - 0.375,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_true) ) *
     ex_gaussian_density(
       x      = g_3,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st3_observed*(1 - st3_true)) *
     ex_gaussian_density(
       x      = g_3 - 0.5,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_g
     )^(st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_observed)*st1_true)
 
@@ -825,31 +826,31 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x    = h_3 - h_1 - 0.5,
       mean = 0,
-      sd   = sqrt(2 * sigma^2)
+      sd   = sqrt(2 * p_sigma^2)
     )^((1 - st3_observed)*st2_observed*(1 - st1_observed)*(1 - st3_true)*(1 - st2_true)*(1 - st1_true)) *
     dnorm(
       x    = h_3 - h_2 - 0.25,
       mean = 0,
-      sd   = sqrt(2 * sigma^2)
+      sd   = sqrt(2 * p_sigma^2)
     )^((1 - st3_observed)*(1 - st2_observed)*(1 - st2_true)*(1 - st3_true)) *
     dnorm(
       x    = h_3 - 0.125,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^((1 - st3_observed)*(1 - st3_true)*st2_true) *
     dnorm(
       x    = h_3 - 0.375,
       mean = 0,
-      sd   = sigma
+      sd   = p_sigma
     )^( (1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_true ) *
     ex_gaussian_density(
       x      = h_3,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st3_observed)*st3_true) *
     ex_gaussian_density(
       x      = h_3 - 0.5,
-      sigma  = sigma,
+      sigma  = p_sigma,
       lambda = lambda_h
     )^((1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_observed*(1 - st1_true))
 

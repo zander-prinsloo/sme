@@ -44,33 +44,8 @@ get_ar1_tenure_full_likelihood <- function(
       vectors for all three periods should all have the same length."
       )
     }
-    # if (!all(names(par_vec) == c(
-    #   "theta_1",
-    #   "theta_2",
-    #   "sigma",
-    #   "lambda_g",
-    #   "lambda_h",
-    #   "err",
-    #   "mu"
-    # ))) {
-    #   cli::cli_alert_info(
-    #     "The `par_vec` argument should be a named numeric atomic vector and in
-    #   the following order: theta_1, theta_2, sigma, lambda_g, lambda_h,
-    #   err, mu"
-    #   )
-    # }
   }
 
-
-  #_____________________________________________________________________________
-  # Specify params -------------------------------------------------------------
-  # theta_1  <- par_vec[1]
-  # theta_2  <- par_vec[2]
-  # sigma    <- par_vec[3]
-  # lambda_g <- par_vec[4]
-  # lambda_h <- par_vec[5]
-  # err      <- par_vec[6]
-  # mu       <- par_vec[7]
   #_____________________________________________________________________________
   # Computations ---------------------------------------------------------------
   lik <- get_ar1_tenure_individual_likelihood(
@@ -93,77 +68,6 @@ get_ar1_tenure_full_likelihood <- function(
       by_true_status = FALSE,
       skip_checks    = skip_checks
   )
-
-
-
-
-
-
-
-  # ind_lik_vec <- Vectorize(
-  #   FUN = get_ar1_tenure_individual_likelihood,
-  #   vectorize.args = c(
-  #     "st1_observed",
-  #     "st2_observed",
-  #     "st3_observed",
-  #     "g_1",
-  #     "g_2",
-  #     "g_3",
-  #     "h_1",
-  #     "h_2",
-  #     "h_3"
-  #   ),
-  #   SIMPLIFY = TRUE
-  # )
-  # lik <- ind_lik_vec(
-  #   st1_observed   = st1_observed,
-  #   st2_observed   = st2_observed,
-  #   st3_observed   = st3_observed,
-  #   g_1            = g_1,
-  #   g_2            = g_2,
-  #   g_3            = g_3,
-  #   h_1            = h_1,
-  #   h_2            = h_2,
-  #   h_3            = h_3,
-  #   theta_1        = theta_1,
-  #   theta_2        = theta_2,
-  #   sigma          = sigma,
-  #   lambda_g       = lambda_g,
-  #   lambda_h       = lambda_h,
-  #   err            = err,
-  #   mu             = mu,
-  #   by_true_status = FALSE,
-  #   skip_checks    = skip_checks
-  # )
-
-
-
-
-
-
-  # lik <- get_ar1_tenure_individual_likelihood(
-  #   st1_observed   = st1_observed,
-  #   st2_observed   = st2_observed,
-  #   st3_observed   = st3_observed,
-  #   g_1            = g_1,
-  #   g_2            = g_2,
-  #   g_3            = g_3,
-  #   h_1            = h_1,
-  #   h_2            = h_2,
-  #   h_3            = h_3,
-  #   err            = err,
-  #   mu             = mu,
-  #   theta_1        = theta_1,
-  #   theta_2        = theta_2,
-  #   sigma          = sigma,
-  #   lambda_h       = lambda_h,
-  #   lambda_g       = lambda_g,
-  #   by_true_status = FALSE
-  # )
-
-  # log_lik <- lik |>
-  #   log() |>
-  #   fsum()
 
   #_____________________________________________________________________________
   # Return --------------------------------------------------------------------
@@ -445,7 +349,6 @@ get_ar1_tenure_individual_likelihood <- function(
   if (!by_true_status) {
     lik <- rowSums(lik)
   }
-
 
   #_____________________________________________________________________________
   # Return----------------------------------------------------------------------
@@ -789,11 +692,6 @@ get_ar1_tenure_joint_probability <- function(
 
 
 
-
-
-
-
-
 #' Density of exGaussian distribution
 #'
 #' Sum of a gaussian and exponential random variable.
@@ -814,23 +712,7 @@ ex_gaussian_density <- function(x, sigma, lambda) {
    }
    if (sigma <= 0) {
      cli::cli_alert_info("`sigma` parameter must be postive, as parameter of gaussian distribution. It has been set to 1e-13")
-     #sigma <- 1e-13
    }
-   # if (own_func) {
-   #    #___________________________________________________________________________
-   #    # Integrand-----------------------------------------------------------------
-   #    integrand <- function(z) {
-   #      dnorm(z, mean = 0, sd = sigma) * dexp(x - z, rate = 1/lambda)
-   #    }
-   #    #___________________________________________________________________________
-   #    # Integrate-----------------------------------------------------------------
-   #    result <- integrate(integrand, lower = -Inf, upper = x)
-   #
-   #    #___________________________________________________________________________
-   #    # Return--------------------------------------------------------------------
-   #    return(result$value)
-   #
-   #  } else {
     #___________________________________________________________________________
     # Use package---------------------------------------------------------------
     result <- gamlss.dist::dexGAUS(
@@ -842,8 +724,6 @@ ex_gaussian_density <- function(x, sigma, lambda) {
     #___________________________________________________________________________
     # Return--------------------------------------------------------------------
     return(result)
-  #}
-
 
 }
 

@@ -316,24 +316,24 @@ estimate_ar1_tenure <- function(
 
   #_____________________________________________________________________________
   # Local Estimation -----------------------------------------------------------
-  A_mat <- matrix(
-    c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-      0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-      0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-      0, 0, 0, 0, 0, 1, 0), # Constraint for err
-    ncol  = 7,
-    byrow = TRUE
-  )
-  B_mat <- c(-0.000001, -0.000001, -0.000001, -0.000001)
+  # A_mat <- matrix(
+  #   c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
+  #     0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
+  #     0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
+  #     0, 0, 0, 0, 0, 1, 0), # Constraint for err
+  #   ncol  = 7,
+  #   byrow = TRUE
+  # )
+  # B_mat <- c(-0.000001, -0.000001, -0.000001, -0.000001)
 
   sme_estimation <- maxLik::maxLik(
     fn_ll,
     start = init_params,
-    method = "BFGS",
-    constraints = list(
-      ineqA = A_mat,
-      ineqB = B_mat
-    )
+    method = "NM"#,
+    # constraints = list(
+    #   ineqA = A_mat,
+    #   ineqB = B_mat
+    # )
 
   )
   if (verbose) {
@@ -347,11 +347,11 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "BFGS",
-      constraints = list(
-        ineqA = A_mat,
-        ineqB = B_mat
-      )
+      method = "NM"#,
+      # constraints = list(
+      #   ineqA = A_mat,
+      #   ineqB = B_mat
+      # )
     )
     if (verbose) {
       print(sme_estimation |> summary())
@@ -364,11 +364,11 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "BFGS",
-      constraints = list(
-        ineqA = A_mat,
-        ineqB = B_mat
-      )
+      method = "NM"#,
+      # constraints = list(
+      #   ineqA = A_mat,
+      #   ineqB = B_mat
+      # )
     )
     if (verbose) {
       print(sme_estimation |> summary())
@@ -381,11 +381,11 @@ estimate_ar1_tenure <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "BFGS",
-      constraints = list(
-        ineqA = A_mat,
-        ineqB = B_mat
-      )
+      method = "NM"#,
+      # constraints = list(
+      #   ineqA = A_mat,
+      #   ineqB = B_mat
+      # )
     )
 
     if (verbose) {

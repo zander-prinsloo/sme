@@ -98,14 +98,14 @@ estimate_ar1_tenure <- function(
       theta_2_lower  <- -2.5
       theta_2_upper  <- -1
 
-      sigma_lower    <-  0.00001
+      sigma_lower    <-  -5
       sigma_upper    <-  1
 
-      lambda_g_lower <-  5
+      lambda_g_lower <-  1
       lambda_g_upper <-  8
 
       lambda_h_lower <-  1
-      lambda_h_upper <-  4
+      lambda_h_upper <-  8
 
       err_lower      <-  0.5
       err_upper      <-  3

@@ -140,7 +140,7 @@ get_ar1_tenure_individual_likelihood <- function(
       cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
     }
     if (sigma < 0) {
-      cli::cli_abort("Gaussian parameter `sigma` must be non-negative")
+      cli::cli_alert_info("Gaussian parameter `sigma` must be non-negative - not incl exp transform")
     }
     if (
       length(unique(lengths(
@@ -445,7 +445,7 @@ get_ar1_tenure_joint_probability <- function(
       cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
     }
     if (p_sigma < 0) {
-      cli::cli_abort("Gaussian parameter `sigma` must be non-negative")
+      cli::cli_abort("Gaussian parameter `p_sigma` must be non-negative")
     }
   }
 

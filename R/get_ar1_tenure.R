@@ -18,12 +18,15 @@ get_ar1_tenure_full_likelihood <- function(
     h_3,
     theta_1,
     theta_2,
-    sigma,
+    sigma   = NULL,
+    sigma_g = NULL,
+    sigma_h = NULL,
     lambda_g,
     lambda_h,
     err,
     mu,
-    skip_checks = FALSE
+    skip_checks = FALSE,
+    two_sigmas  = FALSE
 ){
   #_____________________________________________________________________________
   # Arg Checks -----------------------------------------------------------------
@@ -61,12 +64,15 @@ get_ar1_tenure_full_likelihood <- function(
       theta_1        = theta_1,
       theta_2        = theta_2,
       sigma          = sigma,
+      sigma_g        = sigma_g,
+      sigma_h        = sigma_h,
       lambda_g       = lambda_g,
       lambda_h       = lambda_h,
       err            = err,
       mu             = mu,
       by_true_status = FALSE,
-      skip_checks    = skip_checks
+      skip_checks    = skip_checks,
+      two_sigmas     = two_sigmas
   )
 
   #_____________________________________________________________________________
@@ -121,13 +127,16 @@ get_ar1_tenure_individual_likelihood <- function(
     h_3,
     theta_1,
     theta_2,
-    sigma,
+    sigma   = NULL,
+    sigma_g = sigma,
+    sigma_h = sigma,
     lambda_g,
     lambda_h,
     err,
     mu,
     by_true_status = FALSE,
-    skip_checks    = FALSE
+    skip_checks    = FALSE,
+    two_sigmas     = FALSE
 ){
 
   #_____________________________________________________________________________
@@ -184,11 +193,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     ),
     true_110 = get_ar1_tenure_joint_probability(
       st1_observed = st1_observed,
@@ -206,11 +218,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     ),
     true_101 = get_ar1_tenure_joint_probability(
       st1_observed = st1_observed,
@@ -228,11 +243,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     ),
     true_100 = get_ar1_tenure_joint_probability(
       st1_observed = st1_observed,
@@ -250,11 +268,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     ),
     true_011 = get_ar1_tenure_joint_probability(
       st1_observed = st1_observed,
@@ -272,11 +293,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     ),
     true_010 = get_ar1_tenure_joint_probability(
       st1_observed = st1_observed,
@@ -294,11 +318,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     ),
     true_001 = get_ar1_tenure_joint_probability(
       st1_observed = st1_observed,
@@ -316,11 +343,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     ),
     true_000 = get_ar1_tenure_joint_probability(
       st1_observed = st1_observed,
@@ -338,11 +368,14 @@ get_ar1_tenure_individual_likelihood <- function(
       theta_1      = theta_1,
       theta_2      = theta_2,
       sigma        = sigma,
+      sigma_g      = sigma_g,
+      sigma_h      = sigma_h,
       lambda_g     = lambda_g,
       lambda_h     = lambda_h,
       err          = err,
       mu           = mu,
-      skip_checks  = skip_checks
+      skip_checks  = skip_checks,
+      two_sigmas   = two_sigmas
     )
   )
 
@@ -422,12 +455,15 @@ get_ar1_tenure_joint_probability <- function(
     h_3,
     theta_1,
     theta_2,
-    sigma,
+    sigma   = NULL,
+    sigma_g = NULL,
+    sigma_h = NULL,
     lambda_g,
     lambda_h,
     err,
     mu,
-    skip_checks  = FALSE
+    skip_checks  = FALSE,
+    two_sigmas   = FALSE
   ) {
 
   #_____________________________________________________________________________
@@ -436,7 +472,20 @@ get_ar1_tenure_joint_probability <- function(
   p_theta_1 <- pnorm(theta_1)
   p_theta_2 <- pnorm(theta_2)
   p_mu      <- pnorm(mu)
-  p_sigma   <- exp(sigma)
+  if (all(is.null(sigma) & is.null(sigma_g) & is.null(sigma_h))) {
+    cli::cli_abort("not all sigma args can be NULL")
+  }
+  if (isTRUE(two_sigmas) & (is.null(sigma_g) | is.null(sigma_h))) {
+    cli::cli_abort("if two_sigmas is TRUE, then both sigmas must be non-NULL")
+  }
+  if (!two_sigmas) {
+    p_sigma_g <- exp(sigma)
+    p_sigma_h <- exp(sigma)
+  } else {
+    p_sigma_g <- exp(sigma_g)
+    p_sigma_h <- exp(sigma_h)
+  }
+
   if (!skip_checks) {
     if (lambda_h < 0) {
       cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
@@ -444,9 +493,9 @@ get_ar1_tenure_joint_probability <- function(
     if (lambda_g < 0) {
       cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
     }
-    if (p_sigma < 0) {
-      cli::cli_abort("Gaussian parameter `p_sigma` must be non-negative")
-    }
+    # if (p_sigma < 0) {
+    #   cli::cli_abort("Gaussian parameter `p_sigma` must be non-negative")
+    # }
   }
 
   #_____________________________________________________________________________
@@ -486,13 +535,13 @@ get_ar1_tenure_joint_probability <- function(
   #_____________________________________________________________________________
   # tenure Q1-------------------------------------------------------------------
   p_tenure_q1 <- ex_gaussian_density(x      = g_1,
-                                     sigma  = p_sigma,
+                                     sigma  = p_sigma_g,
                                      lambda = lambda_g)^st1_observed           # s1 = 1
 
   #_____________________________________________________________________________
   # unemployment duration Q1----------------------------------------------------
   p_unempl_dur_q1 <- ex_gaussian_density(x      = h_1,
-                                         sigma  = p_sigma,
+                                         sigma  = p_sigma_h,
                                          lambda = lambda_h)^(1 - st1_observed) # s1 = 0
 
   #_____________________________________________________________________________
@@ -501,44 +550,45 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x      = g_2 - g_1 - 0.25,
       mean   = 0,
-      sd     = sqrt(2 * p_sigma^2)
+      sd     = sqrt(2 * p_sigma_g^2)
     )^(st2_observed*st1_observed*st1_true*st2_true) *  # S*2 = 1, S*1 = 1, S2 = 1, S1 = 1
     dnorm(
       x      = g_2 - 0.125,
       mean   = 0,
-      sd     = p_sigma
+      sd     = p_sigma_g
     )^(st2_observed*st2_true*(1 - st1_true)) *         # S*2 = 1, S*1 = 0, S2 = 1, S1 = 0/1
     ex_gaussian_density(
       x      = g_2,
-      sigma  = p_sigma,
+      sigma  = p_sigma_g,
       lambda = lambda_g
     )^(st2_observed*(1 - st2_true)) *# S*2 = 0, S2 = 1
     ex_gaussian_density(
       x      = g_2 - 0.25,
-      sigma  = p_sigma,
+      sigma  = p_sigma_g,
       lambda = lambda_g
     )^(st2_observed*(st2_true*(1 - st1_observed)*st1_true))   # S*2 = 1, S*1 = 1, S2 = 1, S1 = 0
+
   #_____________________________________________________________________________
   # unemployment duration Q2----------------------------------------------------
   p_unempl_dur_q2 <-
     dnorm(
       x      = h_2 - h_1 - 0.25,
       mean   = 0,
-      sd     = sqrt(2 * p_sigma^2)
+      sd     = sqrt(2 * p_sigma_h^2)
     )^((1 - st2_observed)*(1 - st1_observed)*(1 - st1_true)*(1 - st2_true)) * # S*2=0, S*1=0, S2=0, S1=0
     dnorm(
       x      = h_2 - 0.125,
       mean   = 0,
-      sd     = p_sigma
+      sd     = p_sigma_h
     )^( (1 - st2_observed)*(1 - st2_true)*st1_true ) *            #
     ex_gaussian_density(
       x      = h_2,
-      sigma  = p_sigma,
+      sigma  = p_sigma_h,
       lambda = lambda_h
     )^((1 - st2_observed)*(st2_true)) *            #
     ex_gaussian_density(
       x      = h_2 - 0.25,
-      sigma  = p_sigma,
+      sigma  = p_sigma_h,
       lambda = lambda_h
     )^((1 - st2_observed)*(1 - st2_true)*st1_observed*(1 - st1_true))
 
@@ -548,72 +598,34 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x    = g_3 - g_1 - 0.5,
       mean = 0,
-      sd   = sqrt(2*p_sigma^2)
+      sd   = sqrt(2*p_sigma_g^2)
     )^(st3_observed*(1 - st2_observed)*st1_observed*st3_true*st2_true*st1_true) *
     dnorm(
       x    = g_3 - g_2 - 0.25,
       mean = 0,
-      sd   = sqrt(2 * p_sigma^2)
+      sd   = sqrt(2 * p_sigma_g^2)
     )^(st3_observed*st2_observed*st2_true*st3_true) *
     dnorm(
       x    = g_3 - 0.125,
       mean = 0,
-      sd   = p_sigma
+      sd   = p_sigma_g
     )^(st3_observed*st3_true*(1 - st2_true)) *
     dnorm(
       x    = g_3 - 0.375,
       mean = 0,
-      sd   = p_sigma
+      sd   = p_sigma_g
     )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_true) ) *
     ex_gaussian_density(
       x      = g_3,
-      sigma  = p_sigma,
+      sigma  = p_sigma_g,
       lambda = lambda_g
     )^(st3_observed*(1 - st3_true)) *
     ex_gaussian_density(
       x      = g_3 - 0.5,
-      sigma  = p_sigma,
+      sigma  = p_sigma_g,
       lambda = lambda_g
     )^(st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_observed)*st1_true)
 
-  # return(list(g_3 - g_2 - 0.25,
-  #             0,
-  #             sqrt(2 * p_sigma^2),
-  #             st3_observed*st2_observed*st2_true*st3_true ))
-  # return(
-  #   list(
-  #     dnorm(
-  #       x    = g_3 - g_1 - 0.5,
-  #       mean = 0,
-  #       sd   = sqrt(2*p_sigma^2)
-  #     )^(st3_observed*(1 - st2_observed)*st1_observed*st3_true*st2_true*st1_true),
-  #     dnorm(
-  #       x    = g_3 - g_2 - 0.25,
-  #       mean = 0,
-  #       sd   = sqrt(2 * p_sigma^2)
-  #     )^(st3_observed*st2_observed*st2_true*st3_true)*1000000,
-  #     dnorm(
-  #       x    = g_3 - 0.125,
-  #       mean = 0,
-  #       sd   = p_sigma
-  #     )^(st3_observed*st3_true*(1 - st2_true)),
-  #     dnorm(
-  #       x    = g_3 - 0.375,
-  #       mean = 0,
-  #       sd   = p_sigma
-  #     )^( st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_true) ),
-  #     ex_gaussian_density(
-  #       x      = g_3,
-  #       sigma  = p_sigma,
-  #       lambda = lambda_g
-  #     )^(st3_observed*(1 - st3_true)),
-  #     ex_gaussian_density(
-  #       x      = g_3 - 0.5,
-  #       sigma  = p_sigma,
-  #       lambda = lambda_g
-  #     )^(st3_observed*st3_true*(1 - st2_observed)*st2_true*(1 - st1_observed)*st1_true)
-  # ))
-  #
 
 
   #_____________________________________________________________________________
@@ -622,51 +634,51 @@ get_ar1_tenure_joint_probability <- function(
     dnorm(
       x    = h_3 - h_1 - 0.5,
       mean = 0,
-      sd   = sqrt(2 * p_sigma^2)
+      sd   = sqrt(2 * p_sigma_h^2)
     )^((1 - st3_observed)*st2_observed*(1 - st1_observed)*(1 - st3_true)*(1 - st2_true)*(1 - st1_true)) *
     dnorm(
       x    = h_3 - h_2 - 0.25,
       mean = 0,
-      sd   = sqrt(2 * p_sigma^2)
+      sd   = sqrt(2 * p_sigma_h^2)
     )^((1 - st3_observed)*(1 - st2_observed)*(1 - st2_true)*(1 - st3_true)) *
     dnorm(
       x    = h_3 - 0.125,
       mean = 0,
-      sd   = p_sigma
+      sd   = p_sigma_h
     )^((1 - st3_observed)*(1 - st3_true)*st2_true) *
     dnorm(
       x    = h_3 - 0.375,
       mean = 0,
-      sd   = p_sigma
+      sd   = p_sigma_h
     )^( (1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_true ) *
     ex_gaussian_density(
       x      = h_3,
-      sigma  = p_sigma,
+      sigma  = p_sigma_h,
       lambda = lambda_h
     )^((1 - st3_observed)*st3_true) *
     ex_gaussian_density(
       x      = h_3 - 0.5,
-      sigma  = p_sigma,
+      sigma  = p_sigma_h,
       lambda = lambda_h
     )^((1 - st3_observed)*(1 - st3_true)*st2_observed*(1 - st2_true)*st1_observed*(1 - st1_true))
 
-
-  # return(
-  #   list(
-  #     p_misclass_1,
-  #       p_misclass_2,
-  #       p_misclass_3,
-  #       p_employed_q1,
-  #       p_trans_q2,
-  #       p_trans_q3,
-  #       p_tenure_q1,     # 322344
-  #       p_unempl_dur_q1,
-  #       p_tenure_q2,     # 1836
-  #       p_unempl_dur_q2, #
-  #       p_tenure_q3,     # 7686>1
-  #       p_unempl_dur_q3  #
-  #   )
-  # )
+#
+#   return(
+#     list(
+#       p_misclass_1,      # 1
+#         p_misclass_2,    # 2
+#         p_misclass_3,    # 3
+#         p_employed_q1,   # 4
+#         p_trans_q2,      # 5
+#         p_trans_q3,      # 6
+#         p_tenure_q1,     # 7
+#         p_unempl_dur_q1, # 8
+#         p_tenure_q2,     # 9
+#         p_unempl_dur_q2, # 10
+#         p_tenure_q3,     # 11
+#         p_unempl_dur_q3  # 12
+#     )
+#   )
   #_____________________________________________________________________________
   # Likelihood------------------------------------------------------------------
   lik <- p_misclass_1 *
@@ -682,9 +694,24 @@ get_ar1_tenure_joint_probability <- function(
     p_tenure_q3 *
     p_unempl_dur_q3
 
+  # lik <- p_misclass_1 *
+  #   p_misclass_2 *
+  #   p_misclass_3 *
+  #   p_employed_q1 *
+  #   p_trans_q2 *
+  #   p_trans_q3
+  #   p_tenure_q1 *
+  #   p_unempl_dur_q1 *
+  #   p_tenure_q2 *
+  #   p_unempl_dur_q2 *
+  #   p_tenure_q3 *
+  #   p_unempl_dur_q3
+
+
   #_____________________________________________________________________________
   # Return------------------------------------------------------------------
   lik <- pmax(lik, 1e-100)
+  # if else rather
   lik
 
 }

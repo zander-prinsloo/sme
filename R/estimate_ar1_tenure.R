@@ -33,16 +33,6 @@ estimate_ar1_tenure <- function(
   if (is.null(weights)) {
     weights <- rep(1, length(st1_observed))
   }
-  # if (is.null(init_params)) {
-  #   init_params <- c(
-  #     "theta_01" = 1.5,
-  #     "theta_02" = -1.5,
-  #     "err"      = 1.96,
-  #     "mu"       = 0.5
-  #   )
-  # } else if (!names(init_params) %chin% c("theta_01", "theta_02", "err", "mu")) {
-  #   names(init_params) <- c("theta_01", "theta_02", "err", "mu")
-  # }
 
   #_____________________________________________________________________________
   # Obj Function----------------------------------------------------------------
@@ -55,8 +45,9 @@ estimate_ar1_tenure <- function(
     lambda_g <- par_vec[4]
     lambda_h <- par_vec[5]
     err      <- par_vec[6]
-    mu       <- par_vec[7]
+    #mu       <- par_vec[7]
 
+    #print(par_vec)
     log_lik <- get_ar1_tenure_full_likelihood(
       st1_observed   = st1_observed,
       st2_observed   = st2_observed,
@@ -73,7 +64,7 @@ estimate_ar1_tenure <- function(
       lambda_g       = lambda_g,
       lambda_h       = lambda_h,
       err            = err,
-      mu             = mu,
+      #mu             = mu,
       skip_checks    = TRUE
     ) |>
       log()
@@ -110,34 +101,10 @@ estimate_ar1_tenure <- function(
       err_lower      <-  0.5
       err_upper      <-  3
 
-      mu_lower       <- -0.5
-      mu_upper       <-  0.5
+      #mu_lower       <- -0.5
+      #mu_upper       <-  0.5
 
-    } #else if (
-      #!is.list(global_specification) |
-      # !names(global_specification) %chin% c(
-      #   "theta_1_lower",
-      #   "theta_1_upper",
-      #   "theta_2_lower",
-      #   "theta_2_upper",
-      #   "sigma_upper",
-      #   "sigma_lower",
-      #   "lambda_g_upper",
-      #   "lambda_g_lower",
-      #   "lambda_h_upper",
-      #   "lambda_h_lower",
-      #   "err_lower",
-      #   "err_upper",
-      #   "mu_lower",
-      #   "mu_upper"
-      # )
-    # ) {
-    #   cli::cli_abort(
-    #     "If global specification is non NULL, then should be a list giving upper
-    #     and lower bounds for each parameter"
-    #   )
-    #}
-    else {
+    } else {
       theta_1_lower  <- global_specification$theta_1_lower
       theta_1_upper  <- global_specification$theta_1_upper
       theta_2_lower  <- global_specification$theta_2_lower
@@ -150,8 +117,8 @@ estimate_ar1_tenure <- function(
       lambda_h_lower <- global_specification$lambda_h_lower
       err_lower      <- global_specification$err_lower
       err_upper      <- global_specification$err_upper
-      mu_lower       <- global_specification$mu_lower
-      mu_upper       <- global_specification$mu_upper
+      #mu_lower       <- global_specification$mu_lower
+      #mu_upper       <- global_specification$mu_upper
     }
 
     # Create Parameter Space
@@ -185,12 +152,12 @@ estimate_ar1_tenure <- function(
         "err",
         lower = err_lower,
         upper = err_upper
-      ),
-      makeNumericParam(
-        "mu",
-        lower = mu_lower,
-        upper = mu_upper
-      )
+      )#,
+      #makeNumericParam(
+      #  "mu",
+      #  lower = mu_lower,
+      #  upper = mu_upper
+      #)
     )
 
     obj_func <- smoof::makeSingleObjectiveFunction(
@@ -273,8 +240,8 @@ estimate_ar1_tenure <- function(
           "sigma"     = 0.2 ,
           "lambda_g"  = 6.5  ,
           "lambda_h"  = 2.7,
-          "err"       = 1.98,
-          "mu"        = 0.2465914012
+          "err"       = 1.98#,
+          #"mu"        = 0.2465914012
         ),
         c(
           "theta_1"   = 1.96,
@@ -282,12 +249,12 @@ estimate_ar1_tenure <- function(
           "sigma"     = 0.3 ,
           "lambda_g"  = 6.5  ,
           "lambda_h"  = 2.7,
-          "err"       = 1.2,
-          "mu"        = -0.2
+          "err"       = 1.2#,
+          #"mu"        = -0.2
         )
 
       )
-    df_initial_search$y <- apply(
+    df_initial_search$y <- apply( # this takes bit of time
       df_initial_search,
       1,
       obj_func
@@ -316,15 +283,6 @@ estimate_ar1_tenure <- function(
 
   #_____________________________________________________________________________
   # Local Estimation -----------------------------------------------------------
-  # A_mat <- matrix(
-  #   c(0, 0, 1, 0, 0, 0, 0,  # Constraint for sigma
-  #     0, 0, 0, 1, 0, 0, 0,  # Constraint for lambda_g
-  #     0, 0, 0, 0, 1, 0, 0,  # Constraint for lambda_h
-  #     0, 0, 0, 0, 0, 1, 0), # Constraint for err
-  #   ncol  = 7,
-  #   byrow = TRUE
-  # )
-  # B_mat <- c(-0.000001, -0.000001, -0.000001, -0.000001)
 
   sme_estimation <- maxLik::maxLik(
     fn_ll,
@@ -415,8 +373,8 @@ estimate_ar1_tenure <- function(
                        "sigma",
                        "lambda_g",
                        "lambda_h",
-                       "err",
-                       "mu")
+                       "err")#,
+                       #"mu")
   )
   SME_JobExit_rate <- SME_JobExit[1][[1]]
   SME_JobEntry <- car::deltaMethod(
@@ -428,23 +386,23 @@ estimate_ar1_tenure <- function(
                        "sigma",
                        "lambda_g",
                        "lambda_h",
-                       "err",
-                       "mu")
+                       "err")#,
+                       #"mu")
   )
   SME_JobEntry_rate <- SME_JobEntry[1][[1]]
-  SME_Empl <- car::deltaMethod(
-    sme_estimation,
-    vcov.          = vcov(sme_estimation),
-    g              = "pnorm(mu)",
-    parameterNames = c("theta_1",
-                       "theta_2",
-                       "sigma",
-                       "lambda_g",
-                       "lambda_h",
-                       "err",
-                       "mu")
-  )
-  SME_Empl_rate <- SME_Empl[1][[1]]
+  # SME_Empl <- car::deltaMethod(
+  #   sme_estimation,
+  #   vcov.          = vcov(sme_estimation),
+  #   g              = "pnorm(mu)",
+  #   parameterNames = c("theta_1",
+  #                      "theta_2",
+  #                      "sigma",
+  #                      "lambda_g",
+  #                      "lambda_h",
+  #                      "err")#,
+  #                      #"mu")
+  # )
+  #SME_Empl_rate <- SME_Empl[1][[1]]
   SME_Misclass <- car::deltaMethod(
     sme_estimation,
     vcov. = vcov(sme_estimation),
@@ -454,15 +412,15 @@ estimate_ar1_tenure <- function(
                        "sigma",
                        "lambda_g",
                        "lambda_h",
-                       "err",
-                       "mu")
+                       "err")#,
+                       #"mu")
   )
   SME_Misclass_rate <- SME_Misclass[1][[1]]
 
   # Implied SEs ----
   SME_JobExit_se  <- SME_JobExit[2][[1]]
   SME_JobEntry_se <- SME_JobEntry[2][[1]]
-  SME_Empl_se     <- SME_Empl[2][[1]]
+  #SME_Empl_se     <- SME_Empl[2][[1]]
   SME_Misclass_se <- SME_Misclass[2][[1]]
 
 
@@ -471,36 +429,39 @@ estimate_ar1_tenure <- function(
   coef1 <- qnorm(1 - 0.01/2)
   coef01 <- qnorm(1 - 0.001/2)
   SME_CI_5 <- data.table(
-    "Prob" = c("poverty_exit", "poverty_entry", "level", "misclass"),
+    "Prob" = c("poverty_exit", "poverty_entry", #"level",
+               "misclass"),
     "LowerBound" = c(SME_JobExit_rate  - coef5*SME_JobExit_se,
                      SME_JobEntry_rate - coef5*SME_JobEntry_se,
-                     SME_Empl_rate     - coef5*SME_Empl_se,
+                     #SME_Empl_rate     - coef5*SME_Empl_se,
                      SME_Misclass_rate - coef5*SME_Misclass_se),
     "UpperBound" = c(SME_JobExit_rate  + coef5*SME_JobExit_se,
                      SME_JobEntry_rate + coef5*SME_JobEntry_se,
-                     SME_Empl_rate     + coef5*SME_Empl_se,
+                     #SME_Empl_rate     + coef5*SME_Empl_se,
                      SME_Misclass_rate + coef5*SME_Misclass_se)
   )
   SME_CI_1 <- data.table(
-    "Prob" = c("poverty_exit", "poverty_entry", "level", "misclass"),
+    "Prob" = c("poverty_exit", "poverty_entry", #"level",
+               "misclass"),
     "LowerBound" = c(SME_JobExit_rate  - coef1*SME_JobExit_se,
                      SME_JobEntry_rate - coef1*SME_JobEntry_se,
-                     SME_Empl_rate     - coef1*SME_Empl_se,
+                     #SME_Empl_rate     - coef1*SME_Empl_se,
                      SME_Misclass_rate - coef1*SME_Misclass_se),
     "UpperBound" = c(SME_JobExit_rate  + coef1*SME_JobExit_se,
                      SME_JobEntry_rate + coef1*SME_JobEntry_se,
-                     SME_Empl_rate     + coef1*SME_Empl_se,
+                     #SME_Empl_rate     + coef1*SME_Empl_se,
                      SME_Misclass_rate + coef1*SME_Misclass_se)
   )
   SME_CI_01 <- data.table(
-    "Prob" = c("poverty_exit", "poverty_entry", "level", "misclass"),
+    "Prob" = c("poverty_exit", "poverty_entry", #"level",
+               "misclass"),
     "LowerBound" = c(SME_JobExit_rate  - coef01*SME_JobExit_se,
                      SME_JobEntry_rate - coef01*SME_JobEntry_se,
-                     SME_Empl_rate     - coef01*SME_Empl_se,
+                     #SME_Empl_rate     - coef01*SME_Empl_se,
                      SME_Misclass_rate - coef01*SME_Misclass_se),
     "UpperBound" = c(SME_JobExit_rate  + coef01*SME_JobExit_se,
                      SME_JobEntry_rate + coef01*SME_JobEntry_se,
-                     SME_Empl_rate     + coef01*SME_Empl_se,
+                     #SME_Empl_rate     + coef01*SME_Empl_se,
                      SME_Misclass_rate + coef01*SME_Misclass_se)
   )
 
@@ -515,11 +476,11 @@ estimate_ar1_tenure <- function(
     "model_summary"      = sme_estimation |> summary(),
     "poverty_entry_rate" = SME_JobEntry_rate,
     "poverty_exit_rate"  = SME_JobExit_rate,
-    "poverty_rate"       = SME_Empl_rate,
+    #"poverty_rate"       = SME_Empl_rate,
     "misclass_rate"      = SME_Misclass_rate,
     "poverty_entry_se"   = SME_JobEntry_se,
     "poverty_exit_se"    = SME_JobExit_se,
-    "poverty_se"         = SME_Empl_se,
+    #"poverty_se"         = SME_Empl_se,
     "misclass_se"        = SME_Misclass_se,
     "implied_CI_5perc"   = SME_CI_5,
     "implied_CI_1perc"   = SME_CI_1,

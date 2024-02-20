@@ -91,7 +91,7 @@ sim_tenure_ar1 <- function(n        = 100000,
   g1true[s1true == 0] <- 0
   g2true              <- s2true*(g1true + 0.25) + (1 - s2true)*0
   g3true              <- s3true*(g2true + 0.25) + (1 - s3true)*0
-  k1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_g) # mean = 1/lambda
+  k1                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_g)
   k2                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_g)
   k3                  <- gamlss.dist::rexGAUS(n = n, mu = 0, sigma = sigma, nu = lambda_g)
   u_g1                <- rnorm(n = n, mean = 0, sd = sigma)

@@ -39,9 +39,9 @@
 #    global_n             = 50,   # size of initial grid for mlrMBO, only if global
 #    global_iterations    = 50    # number of global est. iterations, only if global
 # )
+#
 
-
-# # Specify your own bounds for global specification
+# Specify your own bounds for global specification
 # results_tenure_sim <- estimate_ar1_tenure(
 #    st3_observed         = df_sim_ten$s3obs,
 #    st2_observed         = df_sim_ten$s2obs,
@@ -57,7 +57,7 @@
 #    init_params          = c(
 #                    "theta_1"   = 1.6,
 #                    "theta_2"   = -1.6,
-#                    "sigma"     = -2.3,
+#                    "sigma"     = 0.2,
 #                    "lambda_g"  = 3.1,
 #                    "lambda_h"  = 2.9,
 #                    "err"       = 1.6,
@@ -68,7 +68,7 @@
 #                theta_1_upper   =  2.5,
 #                theta_2_lower   = -2.5,
 #                theta_2_upper   = -1,
-#                sigma_lower     =  -5,
+#                sigma_lower     =  0.005,
 #                sigma_upper     =  1,
 #                lambda_g_lower  =  1,
 #                lambda_g_upper  =  8,
@@ -84,5 +84,5 @@
 #    global_n             = 50,
 #    global_iterations    = 50
 # )
-
-
+#
+#

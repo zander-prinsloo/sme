@@ -140,38 +140,38 @@ get_ar1_tenure_individual_likelihood_mult_sigma <- function(
 
   #_____________________________________________________________________________
   # Arguments-------------------------------------------------------------------
-  if (!skip_checks) {
-    if (lambda_h < 0) {
-      cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
-    }
-    if (lambda_g < 0) {
-      cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
-    }
-    if (sigma < 0) {
-      cli::cli_alert_info("Gaussian parameter `sigma` must be non-negative - not incl exp transform")
-    }
-    if (
-      length(unique(lengths(
-        list(
-          st1_observed,
-          st2_observed,
-          st3_observed,
-          g_1, g_2, g_3,
-          h_1, h_2, h_3
-        )
-      ))) > 1
-    ) {
-      cli::cli_alert_info(
-        "Warning: The observed status (s_observed), tenure (g), and unemployment duration (h)
-      vectors for all three periods should all have the same length."
-      )
-    }
-    if (length(st1_observed) > 1) {
-      cli::cli_alert_info(
-        "Warning: inputs should be of length 1, otherwise use `get_ar1_tenure_individual_likelihood`"
-      )
-    }
-  }
+  # if (!skip_checks) {
+  #   if (lambda_h < 0) {
+  #     cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
+  #   }
+  #   if (lambda_g < 0) {
+  #     cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
+  #   }
+  #   # if (sigma < 0) {
+  #   #   cli::cli_alert_info("Gaussian parameter `sigma` must be non-negative - not incl exp transform")
+  #   # }
+  #   if (
+  #     length(unique(lengths(
+  #       list(
+  #         st1_observed,
+  #         st2_observed,
+  #         st3_observed,
+  #         g_1, g_2, g_3,
+  #         h_1, h_2, h_3
+  #       )
+  #     ))) > 1
+  #   ) {
+  #     cli::cli_alert_info(
+  #       "Warning: The observed status (s_observed), tenure (g), and unemployment duration (h)
+  #     vectors for all three periods should all have the same length."
+  #     )
+  #   }
+  #   if (length(st1_observed) > 1) {
+  #     cli::cli_alert_info(
+  #       "Warning: inputs should be of length 1, otherwise use `get_ar1_tenure_individual_likelihood`"
+  #     )
+  #   }
+  # }
 
   #_____________________________________________________________________________
   # Calculation-----------------------------------------------------------------
@@ -472,17 +472,17 @@ get_ar1_tenure_joint_probability_mult_sigma <- function(
   # p_theta_2 <- pnorm(theta_2)
   p_mu      <- (pnorm(theta_2))/(1 - pnorm(theta_1) + pnorm(theta_2))
   # p_sigma   <- exp(sigma)
-  if (!skip_checks) {
-    if (lambda_h < 0) {
-      cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
-    }
-    if (lambda_g < 0) {
-      cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
-    }
-    if (p_sigma < 0) {
-      cli::cli_abort("Gaussian parameter `p_sigma` must be non-negative")
-    }
-  }
+  # if (!skip_checks) {
+  #   if (lambda_h < 0) {
+  #     cli::cli_abort("Exponential parameter `lambda_h` must be non-negative")
+  #   }
+  #   if (lambda_g < 0) {
+  #     cli::cli_abort("Exponential parameter `lambda_g` must be non-negative")
+  #   }
+  #   if (p_sigma < 0) {
+  #     cli::cli_abort("Gaussian parameter `p_sigma` must be non-negative")
+  #   }
+  # }
 
   #_____________________________________________________________________________
   # Misclassify Q1--------------------------------------------------------------

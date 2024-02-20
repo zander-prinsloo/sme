@@ -39,13 +39,15 @@ estimate_ar1_tenure_mult_sigma <- function(
   fn_ll <- function(par_vec){
 
     # Specify Parameters
-    theta_1  <- par_vec[1]
-    theta_2  <- par_vec[2]
-    sigma_g  <- par_vec[3]
-    sigma_h  <- par_vec[4]
-    lambda_g <- par_vec[5]
-    lambda_h <- par_vec[6]
-    err      <- par_vec[7]
+    theta_1   <- par_vec[1]
+    theta_2   <- par_vec[2]
+    sigma_g0  <- par_vec[3]
+    sigma_g1  <- par_vec[4]
+    sigma_h0  <- par_vec[5]
+    sigma_h1  <- par_vec[6]
+    lambda_g  <- par_vec[7]
+    lambda_h  <- par_vec[8]
+    err       <- par_vec[9]
     #mu       <- par_vec[7]
 
     #print(par_vec)

@@ -104,10 +104,10 @@ estimate_ar1_tenure_mult_sigma <- function(
       sigma_h1_lower    <-  -3
       sigma_h1_upper    <-  2
 
-      lambda_g_lower <-  1
+      lambda_g_lower <-  -2
       lambda_g_upper <-  8
 
-      lambda_h_lower <-  1
+      lambda_h_lower <-  -2
       lambda_h_upper <-  8
 
       err_lower      <-  0.5

@@ -447,6 +447,8 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
   # p_err     <- pnorm(err)
   # p_theta_1 <- pnorm(theta_1)
   # p_theta_2 <- pnorm(theta_2)
+  lambda_h  <- exp(lambda_h)
+  lambda_g  <- exp(lambda_g)
   p_mu      <- (pnorm(theta_2))/(1 - pnorm(theta_1) + pnorm(theta_2))
   # p_sigma   <- exp(sigma)
   if (!skip_checks) {

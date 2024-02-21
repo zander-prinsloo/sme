@@ -25,7 +25,8 @@ estimate_ar1_tenure_mult_sigma <- function(
     global_specification = NULL,
     verbose              = FALSE,
     global_n             = 100,
-    global_iterations    = 50
+    global_iterations    = 50,
+    optim_alg            = "NM"
 ){
 
   #_____________________________________________________________________________
@@ -48,7 +49,6 @@ estimate_ar1_tenure_mult_sigma <- function(
     lambda_g  <- par_vec[7]
     lambda_h  <- par_vec[8]
     err       <- par_vec[9]
-    #mu       <- par_vec[7]
 
     #print(par_vec)
     log_lik <- get_ar1_tenure_full_likelihood_mult_sigma(
@@ -313,7 +313,7 @@ estimate_ar1_tenure_mult_sigma <- function(
   sme_estimation <- maxLik::maxLik(
     fn_ll,
     start = init_params,
-    method = "NM"
+    method = optim_alg
 
   )
   if (verbose) {
@@ -327,7 +327,7 @@ estimate_ar1_tenure_mult_sigma <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM"
+      method = optim_alg
     )
     if (verbose) {
       print(sme_estimation |> summary())
@@ -340,7 +340,7 @@ estimate_ar1_tenure_mult_sigma <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM"
+      method = optim_alg
     )
     if (verbose) {
       print(sme_estimation |> summary())
@@ -353,7 +353,7 @@ estimate_ar1_tenure_mult_sigma <- function(
     sme_estimation <- maxLik::maxLik(
       fn_ll,
       start = sme_estimation$estimate,
-      method = "NM"
+      method = optim_alg
     )
 
     if (verbose) {

@@ -17,8 +17,8 @@ get_ar1_tenure_full_likelihood_two_sigma <- function(
     h_2,
     h_3,
     posterior_probs,
-    theta_1,
-    theta_2,
+    # theta_1,
+    # theta_2,
     sigma_g,
     sigma_h,
     lambda_g,
@@ -66,8 +66,8 @@ get_ar1_tenure_full_likelihood_two_sigma <- function(
     h_2            = h_2,
     h_3            = h_3,
     posterior_probs = posterior_probs,
-    theta_1        = theta_1,
-    theta_2        = theta_2,
+    # theta_1        = theta_1,
+    # theta_2        = theta_2,
     sigma_g        = sigma_g,
     sigma_h        = sigma_h,
     lambda_g       = lambda_g,
@@ -131,8 +131,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
     h_2,
     h_3,
     posterior_probs,
-    theta_1,
-    theta_2,
+    # theta_1,
+    # theta_2,
     sigma_g,
     sigma_h,
     lambda_g,
@@ -317,8 +317,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -362,8 +362,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -407,8 +407,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -452,8 +452,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -497,8 +497,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -542,8 +542,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -587,8 +587,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -632,8 +632,8 @@ get_ar1_tenure_individual_likelihood_two_sigma <- function(
       h_1          = h_1,
       h_2          = h_2,
       h_3          = h_3,
-      theta_1      = theta_1,
-      theta_2      = theta_2,
+      # theta_1      = theta_1,
+      # theta_2      = theta_2,
       sigma_g      = sigma_g,
       sigma_h      = sigma_h,
       lambda_g     = lambda_g,
@@ -893,8 +893,8 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
     h_1,
     h_2,
     h_3,
-    theta_1,
-    theta_2,
+    # theta_1,
+    # theta_2,
     sigma_g,
     sigma_h,
     lambda_g,
@@ -931,7 +931,7 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
   # p_err     <- pnorm(err)
   # p_theta_1 <- pnorm(theta_1)
   # p_theta_2 <- pnorm(theta_2)
-  p_mu      <- (pnorm(theta_2))/(1 - pnorm(theta_1) + pnorm(theta_2))
+  # p_mu      <- (pnorm(theta_2))/(1 - pnorm(theta_1) + pnorm(theta_2))
 
   # p_sigma   <- exp(sigma)
   if (!skip_checks) {
@@ -963,22 +963,22 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
 
   #_____________________________________________________________________________
   # S1* in Q1 ----------------------------------------------------------------
-  p_employed_q1 <- p_mu^st1_true * # empl
-    (1 - p_mu)^(1 - st1_true)      # unempl
-
-  #_____________________________________________________________________________
-  # S2*|S1*---------------------------------------------------------------------
-  p_trans_q2 <- pnorm(theta_1)^(st1_true * st2_true) *      # S*2 = 1 | S*1 = 1
-    (1 - pnorm(theta_1))^(st1_true * (1 - st2_true)) *      # S*2 = 0 | S*1 = 1
-    pnorm(theta_2)^((1 - st1_true) * st2_true) *            # S*2 = 1 | S*1 = 0
-    (1 - pnorm(theta_2))^((1 - st1_true) * (1 - st2_true))  # S*2 = 0 | S*1 = 0
-
-  #_____________________________________________________________________________
-  # S3*|S2*---------------------------------------------------------------------
-  p_trans_q3 <- pnorm(theta_1)^(st2_true * st3_true) *      # S*3 = 1 | S*2 = 1
-    (1 - pnorm(theta_1))^(st2_true * (1 - st3_true)) *      # S*3 = 0 | S*2 = 1
-    pnorm(theta_2)^((1 - st2_true) * st3_true) *            # S*3 = 1 | S*2 = 0
-    (1 - pnorm(theta_2))^((1 - st2_true) * (1 - st3_true))  # S*3 = 0 | S*2 = 0
+  # p_employed_q1 <- p_mu^st1_true * # empl
+  #   (1 - p_mu)^(1 - st1_true)      # unempl
+  #
+  # #_____________________________________________________________________________
+  # # S2*|S1*---------------------------------------------------------------------
+  # p_trans_q2 <- pnorm(theta_1)^(st1_true * st2_true) *      # S*2 = 1 | S*1 = 1
+  #   (1 - pnorm(theta_1))^(st1_true * (1 - st2_true)) *      # S*2 = 0 | S*1 = 1
+  #   pnorm(theta_2)^((1 - st1_true) * st2_true) *            # S*2 = 1 | S*1 = 0
+  #   (1 - pnorm(theta_2))^((1 - st1_true) * (1 - st2_true))  # S*2 = 0 | S*1 = 0
+  #
+  # #_____________________________________________________________________________
+  # # S3*|S2*---------------------------------------------------------------------
+  # p_trans_q3 <- pnorm(theta_1)^(st2_true * st3_true) *      # S*3 = 1 | S*2 = 1
+  #   (1 - pnorm(theta_1))^(st2_true * (1 - st3_true)) *      # S*3 = 0 | S*2 = 1
+  #   pnorm(theta_2)^((1 - st2_true) * st3_true) *            # S*3 = 1 | S*2 = 0
+  #   (1 - pnorm(theta_2))^((1 - st2_true) * (1 - st3_true))  # S*3 = 0 | S*2 = 0
 
   #_____________________________________________________________________________
   # tenure Q1-------------------------------------------------------------------
@@ -1205,14 +1205,14 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
   p_misclass_3 <- ifelse(is.na(p_misclass_3) | p_misclass_3 < 1e-07, 1e-07, p_misclass_3)
   lp_misclass_3 <- log(p_misclass_3)
 
-  p_employed_q1 <- ifelse(is.na(p_employed_q1) | p_employed_q1 < 1e-07, 1e-07, p_employed_q1)
-  lp_employed_q1 <- log(p_employed_q1)
-
-  p_trans_q2 <- ifelse(is.na(p_trans_q2) | p_trans_q2 < 1e-07, 1e-07, p_trans_q2)
-  lp_trans_q2 <- log(p_trans_q2)
-
-  p_trans_q3 <- ifelse(is.na(p_trans_q3) | p_trans_q3 < 1e-07, 1e-07, p_trans_q3)
-  lp_trans_q3 <- log(p_trans_q3)
+  # p_employed_q1 <- ifelse(is.na(p_employed_q1) | p_employed_q1 < 1e-07, 1e-07, p_employed_q1)
+  # lp_employed_q1 <- log(p_employed_q1)
+  #
+  # p_trans_q2 <- ifelse(is.na(p_trans_q2) | p_trans_q2 < 1e-07, 1e-07, p_trans_q2)
+  # lp_trans_q2 <- log(p_trans_q2)
+  #
+  # p_trans_q3 <- ifelse(is.na(p_trans_q3) | p_trans_q3 < 1e-07, 1e-07, p_trans_q3)
+  # lp_trans_q3 <- log(p_trans_q3)
 
   p_tenure_q1 <- ifelse(is.na(p_tenure_q1) | p_tenure_q1 < 1e-07, 1e-07, p_tenure_q1)
   lp_tenure_q1 <- log(p_tenure_q1)
@@ -1237,9 +1237,9 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
   llik <- lp_misclass_1 +
     lp_misclass_2 +
     lp_misclass_3 +
-    lp_employed_q1 +
-    lp_trans_q2 +
-    lp_trans_q3 +
+    # lp_employed_q1 +
+    # lp_trans_q2 +
+    # lp_trans_q3 +
     lp_tenure_q1 +
     lp_unempl_dur_q1 +
     lp_tenure_q2 +
@@ -1250,10 +1250,10 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
   if(store_likelihoods == TRUE) {
     empl_lik <- lp_misclass_1 +
       lp_misclass_2 +
-      lp_misclass_3 +
-      lp_employed_q1 +
-      lp_trans_q2 +
-      lp_trans_q3
+      lp_misclass_3
+      # lp_employed_q1 +
+      # lp_trans_q2 +
+      # lp_trans_q3
 
     duration_lik <- lp_tenure_q1 +
       lp_unempl_dur_q1 +
@@ -1269,9 +1269,9 @@ get_ar1_tenure_joint_probability_two_sigma <- function(
       p_misclass_1 = p_misclass_1,
       p_misclass_2 = p_misclass_2,
       p_misclass_3 = p_misclass_3,
-      p_employed_q1 = p_employed_q1,
-      p_trans_q2 = p_trans_q2,
-      p_trans_q3 = p_trans_q3,
+      # p_employed_q1 = p_employed_q1,
+      # p_trans_q2 = p_trans_q2,
+      # p_trans_q3 = p_trans_q3,
       p_tenure_q1 = p_tenure_q1,
       p_tenure_q2 = p_tenure_q2,
       p_tenure_q3 = p_tenure_q3,

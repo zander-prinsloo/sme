@@ -143,68 +143,99 @@ sim_tenure_ar1 <- function(n        = 100000,
   df
 
 }
-# df_sim |> View()
-# df_sim <- sim_tenure_ar1(
-#   n = 10000
-# )
-#
-# sim_true_ar1(n = 100)
-#
-#
-# d <- sim_true_ar1(n = 100000)
-#
-# d$s1true |> mean()
-# d$s2 |> mean()
-# d$s3 |> mean()
-#
-# d |>
-#   fgroup_by(s3obs, s2obs) |>
-#   fnobs() |>
-#   fungroup() |>
-#   #fgroup_by(s1) |>
-#   ftransform(job_rate = s1obs/(50000))
-
-# ______________________________________________________________________________
-# create data set in /data------------------------------------------------------
-# usethis::use_data(df_sim,
-#                   overwrite = TRUE)
-#
-#
-#
-#
-#
-#
-#
-# # TRUE
-# #_________________________________________________________
-# (s2true[s1true == 0] |> sum())/(n - (s1true |> sum()))
-# 1 - (s2true[s1true == 1] |> sum())/(s1true |> sum())
-#
-# (s3true[s2true == 0] |> sum())/(n - (s2true |> sum()))
-# 1 - (s3true[s2true == 1] |> sum())/(s2true |> sum())
-#
-# (s3true[s1true == 0] |> sum())/(n - (s1true |> sum()))
-# 1 - (s3true[s1true == 1] |> sum())/(s1true |> sum())
-#
-#
-# # OBSERVED
-# #_________________________________________________________
-# (s2obs[s1obs == 0] |> sum())/(n - (s1obs |> sum()))
-# 1 - (s2obs[s1obs == 1] |> sum())/(s1obs |> sum())
-#
-# (s3obs[s2obs == 0] |> sum())/(n - (s2obs |> sum()))
-# 1 - (s3obs[s2obs == 1] |> sum())/(s2obs |> sum())
-#
-# (s3obs[s1obs == 0] |> sum())/(n - (s1obs |> sum()))
-# 1 - (s3obs[s1obs == 1] |> sum())/(s1obs |> sum())
-#
-#
 
 
-# MISCLASSIFIED
-#_________________________________________________________
+
+## code to prepare `sim-ar2-data` dataset goes here
+
+sim_ar2 <- function(n       = 100000,
+                    theta11 = 0.024 + 0.035,  # 0.08 + 0.058
+                    theta12 = -0.006 + 0.035, # 0.107 + 0.058
+                    theta21 = 0.922 + 0.035, # 0.713 + 0.058
+                    theta22 = 0.035,         # 0.058
+                    mu      = 0,
+                    err     = 1.96,
+                    seed    = 1234){
+
+  set.seed(seed)
+  # time 1-----------
+  #__________________
+  s1true <- rbinom(n    = n,
+                   size = 1,
+                   prob = pnorm(mu))
+  # time 2-----------
+  #__________________
+  s2true <- sapply(
+    s1true,
+    FUN = function(x){
+      if (x == 1) {
+        r <- rbinom(n    = 1,
+                    size = 1,
+                    prob = pnorm(mu)*theta21 + (1 - pnorm(mu))*theta22 +
+                      (pnorm(mu)*(theta11 - theta22) + theta12 - theta22))
+      } else {
+        r <- rbinom(n    = 1,
+                    size = 1,
+                    prob = pnorm(mu)*theta21 + (1 - pnorm(mu))*theta22)
+      }
+      r
+    }
+  )
 
 
+
+  # Misclass----------------------------------
+  #___________________________________________
+  err1 <- rbinom(n    = n,
+                 size = 1,
+                 prob = pnorm(err))
+  err2 <- rbinom(n    = n,
+                 size = 1,
+                 prob = pnorm(err))
+  err3 <- rbinom(n    = n,
+                 size = 1,
+                 prob = pnorm(err))
+  err4 <- rbinom(n    = n,
+                 size = 1,
+                 prob = pnorm(err))
+  # note: err == 1 => correctly classified
+
+  # data frame-----------
+  #______________________
+  df <- data.frame(
+    s1true = s1true,
+    s2true = s2true,
+    err1   = err1,
+    err2   = err2,
+    err3   = err3,
+    err4   = err4
+  ) |>
+    fmutate(s3true = rbinom(n    = n,
+                            size = 1,
+                            prob = theta22 +
+                              (theta12 - theta22)*s2true +
+                              (theta21 - theta22)*s1true +
+                              (theta11 - theta22)*s1true*s2true),
+            s4true = rbinom(n    = n,
+                            size = 1,
+                            prob = theta22 +
+                              (theta12 - theta22)*s3true +
+                              (theta21 - theta22)*s2true +
+                              (theta11 - theta22)*s2true*s3true))
+
+  # Obs Status----------------------------------
+  #___________________________________________
+  df <- df |>
+    ftransform(
+      s1obs = ifelse(err1 == 1, s1true, abs(1 - s1true)),
+      s2obs = ifelse(err2 == 1, s2true, abs(1 - s2true)),
+      s3obs = ifelse(err3 == 1, s3true, abs(1 - s3true)),
+      s4obs = ifelse(err4 == 1, s4true, abs(1 - s4true))
+    )
+
+  df
+
+}
 
 
 

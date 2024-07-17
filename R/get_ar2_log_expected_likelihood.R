@@ -18,10 +18,27 @@ get_ar2_expected_log_likelihood <-
            theta21,
            theta22,
            err,
-           mu) {
+           mu = NULL) {
 
   if (is.null(weights)) {
     weights <- rep(1, length(s4))
+  }
+
+  if (is.null(mu)) {
+    mu <- mu_function(theta11 = theta11,
+                      theta12 = theta12,
+                      theta21 = theta21,
+                      theta22 = theta22)
+  }
+  if (!length(mu) == 1) {
+
+    return(-1e15)
+  }
+  if (any((theta12 < 0 | theta12 > 1) |
+      (theta21 < 0 | theta21 > 1) |
+      (theta22 < 0 | theta22 > 1) |
+      (theta12 + theta21 + theta11 - 2*theta22 < 0 | theta12 + theta21 + theta11 - 2*theta22 > 1))){
+    return(-1e15)
   }
 
   # expected likelihood
@@ -56,6 +73,7 @@ get_ar2_expected_log_likelihood <-
 
                        loglik <- loglik |>
                          log()
+                       loglik[is.nan(loglik)] <- -100000000
                        loglik <- loglik*weights
 
                        pweights <- p_full_misclass(s4 = s4,
@@ -326,4 +344,32 @@ p_full_misclass <- function(s4,
   p <- p1*p2*p3*p4
 
   p
+}
+
+
+#' Make mu a function of entry and exit rates
+#'
+#' Assume level is stationary
+#'
+#' @inheritParams estimate_ar2
+#'
+#' @return numeric
+#' @export
+mu_function <- function(theta11, theta12, theta21, theta22) {
+
+  a <- (theta11 - theta22)*(theta21 + theta11 - 2*theta22)
+
+  b <- (2*theta12 - 2*theta22 + theta21 - 1)
+
+  c <- -theta22
+
+  mu <- c((-b - sqrt(b^2 - 4*a*c))/(2*a), (-b + sqrt(b^2 - 4*a*c))/(2*a))
+
+
+  mu <- mu[mu > 0 & mu < 1]
+  mu <- unname(mu[!is.na(mu)])
+  #print(mu)
+
+  mu
+
 }
